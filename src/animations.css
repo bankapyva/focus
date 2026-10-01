@@ -1,0 +1,182 @@
+/* ==========================================================================
+   FocusTime Smooth Animations Module
+   ========================================================================== */
+
+/* 1. Плавний перехід між сторінками */
+.page,
+.timer-page,
+.stats-page,
+.settings-page {
+  animation: pageFadeIn 160ms ease-out;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 2. Плавна зміна теми оформлення */
+body,
+.sidebar,
+.timer-hero,
+.timer-card-panel,
+.stats-panel,
+.settings-section,
+.stat-mini-card,
+.calendar-cell,
+.month-calendar__cell,
+.area-item,
+.task-item,
+.settings-pill,
+.theme-switch-card,
+.period-selector__btn {
+  transition: 
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease !important;
+}
+
+/* 3. Делікатна пульсація кнопки зупинки */
+.timer-hero__btn--stop {
+  animation: stopBtnSoftPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes stopBtnSoftPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+  }
+}
+
+/* 4. Пришвидшена анімація кругової діаграми розподілу */
+svg circle,
+svg path,
+.recharts-pie-sector,
+.pie-chart-segment {
+  transition: 
+    stroke-dasharray 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    stroke-dashoffset 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 250ms ease !important;
+}
+
+/* 5. Шкали прогресу фокусу */
+.today-panel__goal-fill,
+.today-area-row__fill {
+  transition: width 500ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* 6. Тактильний відгук на кліки кнопок */
+button:active:not(:disabled),
+.settings-pill:active,
+.time-stepper__btn:active,
+.calendar-view-toggle__btn:active,
+.calendar-nav__btn:active,
+.period-selector__btn:active,
+.day-edit-btn-quick:active {
+  transform: scale(0.96) !important;
+  transition: transform 60ms ease-out !important;
+}
+
+/* 7. Акуратна поява модальних вікон */
+.modal-backdrop {
+  animation: backdropFade 160ms ease forwards;
+}
+
+.modal-card {
+  animation: modalPop 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes backdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
+   Анімації статистики та календарів
+   ========================================================================== */
+
+/* Плавна поява нових цифр і назв при перемиканні періодів чи дат */
+.stat-mini-card__value,
+.stat-mini-card__subtext,
+.area-table__td--hours,
+.area-table__td--percent,
+.area-pie-center-label__val {
+  animation: valueSwapFade 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes valueSwapFade {
+  from {
+    opacity: 0.15;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Перемикання місяців (наприклад з жовтня на вересень) */
+.month-calendar__grid {
+  animation: calendarMonthSwitch 190ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes calendarMonthSwitch {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Перемикання років (наприклад з 2026 на 2025) */
+.year-calendar {
+  animation: calendarYearSwitch 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes calendarYearSwitch {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Випадаюче меню сфер у модалці дня */
+.day-edit-custom-dropdown {
+  animation: dropdownFade 110ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

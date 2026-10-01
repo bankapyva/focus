@@ -1,0 +1,779 @@
+/* ========================================
+   1. Timer Page Layout & Header
+======================================== */
+
+.timer-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.timer-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timer-page__title {
+  font-size: 32px;
+  font-weight: 650;
+  letter-spacing: -0.8px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.timer-page__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Бейдж рекордної серії у шапці */
+.header-streak-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 550;
+  color: var(--color-text);
+}
+
+.header-streak-badge svg.icon--flame {
+  color: #f97316;
+}
+
+/* Перемикач теми */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.theme-toggle__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted);
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.theme-toggle__btn:hover {
+  color: var(--color-text);
+}
+
+.theme-toggle__btn--active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text);
+}
+
+/* ========================================
+   2. Центральна Hero-Картка (Таймер)
+======================================== */
+
+.timer-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 52px 32px 44px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  min-height: 350px;
+}
+
+.timer-hero__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Цифровий дисплей таймера */
+.timer-hero__display {
+  margin-bottom: 32px;
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  font-size: 112px;
+  font-weight: 650;
+  letter-spacing: -3.5px;
+  line-height: 1;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Селектор сфери */
+.timer-hero__area-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.timer-hero__area-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.timer-hero__area-selector:hover {
+  background: rgba(0, 0, 0, 0.28);
+  border-color: var(--color-border-light);
+}
+
+.timer-hero__area-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.timer-hero__area-selector svg {
+  color: var(--color-text-muted);
+}
+
+.timer-hero__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  width: 190px;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.timer-hero__dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.timer-hero__dropdown-item:hover {
+  background: var(--color-surface-hover);
+}
+
+.timer-hero__dropdown-item--active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Кнопка запуску/зупинки таймера */
+.timer-hero__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 32px;
+  min-width: 180px;
+  background: var(--color-primary);
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 550;
+  transition: background 160ms ease, transform 120ms ease;
+}
+
+.timer-hero__btn:hover {
+  background: var(--color-primary-hover);
+}
+
+.timer-hero__btn:active {
+  transform: scale(0.98);
+}
+
+.timer-hero__btn--stop {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.timer-hero__btn--stop:hover {
+  background: rgba(239, 68, 68, 0.22);
+}
+
+/* ========================================
+   3. Нижня сітка карток (Сьогодні / Завдання)
+======================================== */
+
+.timer-bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+.timer-card-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  min-height: 280px;
+  min-width: 0;
+}
+
+.timer-card-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timer-card-panel__title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timer-card-panel__title-group svg {
+  color: var(--color-primary);
+}
+
+.timer-card-panel__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.timer-card-panel__link {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  transition: color 150ms ease;
+}
+
+.timer-card-panel__link:hover {
+  color: var(--color-primary);
+}
+
+.timer-card-panel__empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+/* ========================================
+   4. Блок "Сьогодні" (Фікс переносу часу)
+======================================== */
+
+.today-panel__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.today-streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.today-streak-badge svg.icon--flame {
+  color: #f97316;
+}
+
+.today-panel__hours-val {
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.5px;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.today-panel__goal-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 26px;
+}
+
+.today-panel__goal-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 999px;
+  transition: width 240ms ease;
+}
+
+.today-areas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Збільшено ширину під час з 60px до 76px, зменшено прогрес-бар */
+.today-area-row {
+  display: grid;
+  grid-template-columns: 100px 76px 1fr 36px;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.today-area-row__name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.today-area-row__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.today-area-row__name {
+  color: var(--color-text);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Час завжди строго в 1 рядок */
+.today-area-row__hours {
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap !important;
+  text-align: right;
+}
+
+.today-area-row__track {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.today-area-row__fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 240ms ease;
+}
+
+.today-area-row__percent {
+  text-align: right;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+
+/* ========================================
+   5. Картка Завдань (Tasks Panel)
+======================================== */
+
+.tasks-panel {
+  display: flex;
+  flex-direction: column;
+  height: 290px;
+  min-width: 0;
+}
+
+/* Кнопки керування в шапці завдань */
+/* Кнопки керування в шапці завдань */
+.tasks-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tasks-header-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.tasks-header-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text);
+}
+
+.tasks-header-btn--active {
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.tasks-header-btn--danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #f87171;
+}
+
+.tasks-panel__counter {
+  font-size: 11px;
+  font-weight: 550;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  background: rgba(0, 0, 0, 0.22);
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+}
+
+.tasks-input-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tasks-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 140ms ease, background 140ms ease;
+  min-width: 0;
+}
+
+.tasks-input:focus {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: var(--color-primary);
+}
+
+.tasks-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.tasks-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-primary);
+  color: #ffffff;
+  border-radius: var(--radius-sm);
+  transition: background 140ms ease, opacity 140ms ease;
+  flex-shrink: 0;
+}
+
+.tasks-add-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.tasks-add-btn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.tasks-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-right: 4px;
+}
+
+.tasks-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tasks-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tasks-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}
+
+.tasks-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Рядок завдання */
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease;
+  user-select: none;
+  cursor: grab;
+  min-width: 0;
+}
+
+.task-item:hover:not(.task-item--tinted) {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.task-item:active {
+  cursor: grabbing;
+}
+
+.task-item--dragging {
+  opacity: 0.35;
+}
+
+.task-item--completed {
+  opacity: 0.55;
+}
+
+.task-item__checkbox-btn {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.task-checkbox {
+  color: var(--color-text-muted);
+}
+
+.task-checkbox--checked {
+  color: var(--color-primary);
+}
+
+.task-item__title {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--color-text);
+  cursor: pointer;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.task-item--completed .task-item__title {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.task-item__area-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.task-item__area-dot--empty {
+  border: 1px dashed var(--color-text-muted);
+}
+
+.task-item__menu-wrapper {
+  position: relative !important;
+  flex-shrink: 0;
+}
+
+.task-item__menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text-muted);
+  opacity: 0.5;
+  transition: all 120ms ease;
+}
+
+.task-item:hover .task-item__menu-btn,
+.task-item__menu-btn:focus {
+  opacity: 1;
+}
+
+.task-item__menu-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text);
+}
+
+/* Дропдаун меню завдань: відкривається всередину картки */
+.task-menu-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9998 !important;
+  background: transparent !important;
+}
+
+.task-menu-dropdown--fixed {
+  position: fixed !important;
+  width: 155px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+  z-index: 99999 !important;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 !important; /* Прибирає зміщення */
+  animation: menuInstantAppear 90ms ease-out forwards;
+}
+
+@keyframes menuInstantAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.task-menu-dropdown__btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  text-align: left;
+  transition: all 120ms ease;
+  width: 100%;
+  cursor: pointer;
+}
+
+.task-menu-dropdown__btn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.task-menu-dropdown__btn--danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.task-area-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+/* ===================================================
+   Адаптація світлої теми для головної сторінки
+=================================================== */
+
+[data-theme="light"] {
+  .timer-hero__area-selector {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: var(--color-text);
+  }
+
+  .today-streak-badge {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: var(--color-text);
+  }
+
+  .today-panel__goal-track,
+  .today-area-row__track {
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  .tasks-panel__counter {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: var(--color-text-secondary);
+  }
+
+  .tasks-header-btn {
+    background: rgba(0, 0, 0, 0.035);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: var(--color-text-secondary);
+  }
+
+  .tasks-header-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--color-text);
+  }
+
+  .tasks-input {
+    background: rgba(0, 0, 0, 0.035);
+    border-color: rgba(0, 0, 0, 0.09);
+    color: var(--color-text);
+  }
+
+  .tasks-input:focus {
+    background: #ffffff;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  }
+
+  .tasks-input::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  .task-item:hover:not(.task-item--tinted) {
+    background: rgba(0, 0, 0, 0.03);
+  }
+}

@@ -1,0 +1,1162 @@
+/* ========================================
+   1. Головна розмітка сторінки статистики
+======================================== */
+
+.stats-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.stats-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.stats-page__title {
+  font-size: 32px;
+  font-weight: 650;
+  letter-spacing: -0.8px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+/* Перемикач періодів у шапці */
+.period-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.period-selector__btn {
+  padding: 6px 14px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.period-selector__btn:hover {
+  color: var(--color-text);
+}
+
+.period-selector__btn--active {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.period-selector__btn--date {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Базова панель-картка */
+.stats-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.stats-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.stats-panel__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.stats-panel__period-tag {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* Двоколонкова сітка */
+.stats-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ========================================
+   2. Календар активності (Рік + Місяць)
+======================================== */
+
+.calendar-card {
+  gap: 16px;
+}
+
+.calendar-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.calendar-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.calendar-card__controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Перемикач Рік / Місяць */
+.calendar-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.calendar-view-toggle__btn {
+  padding: 4px 10px;
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.calendar-view-toggle__btn:hover {
+  color: var(--color-text);
+}
+
+.calendar-view-toggle__btn--active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+/* Навігація по календарику */
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+}
+
+.calendar-nav__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.calendar-nav__btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text);
+}
+
+.calendar-nav__label {
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--color-text);
+  padding: 0 6px;
+  min-width: 48px;
+  text-align: center;
+}
+
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.calendar-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.calendar-legend__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* Річний вигляд */
+.calendar-grid-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
+.year-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 840px;
+}
+
+.year-calendar__months-grid {
+  display: grid;
+  gap: 3px;
+  margin-left: 28px;
+  height: 18px;
+}
+
+.year-calendar__month-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.year-calendar__body {
+  display: flex;
+  gap: 8px;
+}
+
+.year-calendar__weekdays {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.year-calendar__weekday-label {
+  height: 13px;
+  line-height: 13px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.year-calendar__weeks {
+  display: grid;
+  gap: 3px;
+  flex: 1;
+}
+
+.year-calendar__week-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.calendar-cell {
+  width: 100%;
+  height: 13px;
+  border-radius: 2px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.calendar-cell:hover:not(.calendar-cell--empty) {
+  opacity: 0.85;
+}
+
+.calendar-cell--empty {
+  background: transparent;
+  cursor: default;
+}
+
+.calendar-cell--0 {
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.035);
+}
+
+.calendar-cell--0:hover {
+  background: rgba(0, 0, 0, 0.28);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.calendar-cell--under-2 {
+  background: color-mix(in srgb, var(--color-primary) 32%, rgba(0, 0, 0, 0.35));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+.calendar-cell--2-to-4 {
+  background: color-mix(in srgb, var(--color-primary) 68%, rgba(0, 0, 0, 0.15));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 75%, transparent);
+}
+
+.calendar-cell--4-to-6 {
+  background: var(--color-primary);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 85%, #ffffff 15%);
+}
+
+.calendar-cell--over-6 {
+  background: color-mix(in srgb, var(--color-primary) 88%, #ffffff 12%);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 55%, #ffffff 45%);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+
+/* Місячний вигляд */
+.month-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.month-calendar__header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  text-align: center;
+}
+
+.month-calendar__day-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.month-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.month-calendar__cell {
+  min-height: 48px;
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.month-calendar__cell:hover:not(.month-calendar__cell--padding) {
+  opacity: 0.9;
+}
+
+.month-calendar__cell--padding {
+  background: transparent;
+  cursor: default;
+}
+
+.month-calendar__day-number {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.calendar-cell--under-2 .month-calendar__day-number,
+.calendar-cell--2-to-4 .month-calendar__day-number,
+.calendar-cell--4-to-6 .month-calendar__day-number,
+.calendar-cell--over-6 .month-calendar__day-number {
+  color: #ffffff;
+}
+
+.month-calendar__day-hours {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: right;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+/* ===================================================
+   Тултіп календаря (без смикань і зсувів)
+=================================================== */
+
+.calendar-tooltip {
+  position: fixed !important;
+  z-index: 99999 !important;
+  pointer-events: none !important;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  min-width: 140px;
+  max-width: 220px;
+  white-space: nowrap;
+  margin: 0 !important;
+  animation: tooltipInstantFade 80ms ease-out forwards;
+}
+
+.calendar-tooltip--above {
+  transform: translate(-50%, -100%) !important;
+}
+
+.calendar-tooltip--below {
+  transform: translate(-50%, 0) !important;
+}
+
+@keyframes tooltipInstantFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.calendar-tooltip__title {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 4px;
+}
+
+.calendar-tooltip__title strong {
+  color: var(--color-text);
+}
+
+.calendar-tooltip__list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.calendar-tooltip__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--color-text);
+}
+
+.calendar-tooltip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.calendar-tooltip__hours {
+  color: var(--color-text-muted);
+}
+
+.calendar-tooltip__empty {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* ===================================================
+   3. Розподіл за сферами
+=================================================== */
+
+.area-distribution-panel {
+  min-height: 290px;
+}
+
+.area-distribution-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.area-distribution-body {
+  display: grid;
+  grid-template-columns: 195px 1fr;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  width: 100%;
+}
+
+.area-distribution-chart {
+  position: relative;
+  width: 195px;
+  height: 195px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.area-pie-center-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  width: 130px;
+  text-align: center;
+}
+
+.area-pie-center-label__sub {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.area-pie-center-label__val {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  letter-spacing: -0.4px;
+}
+
+.area-distribution-table-wrap {
+  flex: 1;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.area-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.area-table__th {
+  padding: 4px 8px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.area-table__th--name {
+  text-align: left;
+}
+
+.area-table__th--hours {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.area-table__th--percent {
+  text-align: right;
+  padding-right: 4px;
+}
+
+.area-table__row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.area-table__row:last-child {
+  border-bottom: none;
+}
+
+.area-table__td {
+  padding: 8px;
+  font-size: 13px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.area-table__td--name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.area-table__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.area-table__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.area-table__td--hours {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+.area-table__td--percent {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  padding-right: 4px;
+  white-space: nowrap;
+}
+
+/* ===================================================
+   4. Основна статистика
+=================================================== */
+
+.stats-overview-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+}
+
+.stat-mini-card {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  min-height: 94px;
+  transition: border-color 140ms ease;
+}
+
+.stat-mini-card:hover {
+  border-color: var(--color-border-light);
+}
+
+.stat-mini-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-mini-card__icon {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-muted);
+}
+
+.stat-mini-card__icon--gold {
+  color: #f59e0b;
+}
+
+.stat-mini-card__title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.stat-mini-card__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 0;
+}
+
+.stat-mini-card__value {
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.5px;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  line-height: 1.15;
+}
+
+.stat-mini-card__unit {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.stat-mini-card__subtext {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+/* ===================================================
+   5. Модалка редагування годин дня (DayEditModal)
+=================================================== */
+
+.day-edit-card {
+  max-width: 440px;
+}
+
+.day-edit-date-sub {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.day-edit-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.day-edit-total-row strong {
+  color: var(--color-text);
+  font-size: 15px;
+}
+
+.day-edit-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.day-edit-empty {
+  text-align: center;
+  padding: 16px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.day-edit-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.day-edit-item__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-edit-item__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.day-edit-item__name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.day-edit-item__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-field-wrapper {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 2px 6px;
+  gap: 4px;
+}
+
+.day-edit-stepper__input {
+  width: 34px;
+  padding: 3px 0;
+  text-align: center;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-field-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.day-edit-btn-quick {
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.day-edit-btn-quick:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text);
+}
+
+.day-edit-item__delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.day-edit-item__delete-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.day-edit-add-wrapper {
+  position: relative;
+}
+
+.day-edit-add-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.day-edit-add-trigger:hover {
+  border-color: var(--color-border-light);
+  color: var(--color-text);
+}
+
+.day-edit-add-trigger__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-edit-custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.day-edit-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 120ms ease;
+  width: 100%;
+  text-align: left;
+}
+
+.day-edit-dropdown-item:hover {
+  background: var(--color-surface-hover);
+}
+
+/* ===================================================
+   6. Модалка вибору періоду дат (DateRangeModal)
+=================================================== */
+
+.date-range-modal {
+  max-width: 360px;
+}
+
+.date-inputs-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.date-input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.date-input-group label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.date-text-input {
+  width: 100%;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text);
+  font-size: 12px;
+  outline: none;
+}
+
+.range-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.range-calendar__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.range-nav-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.range-nav-btn {
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.range-nav-btn:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.range-calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.range-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.range-day--empty {
+  height: 32px;
+}
+
+.range-day {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 100ms ease;
+}
+
+.range-day:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.range-day--in-range {
+  background: rgba(63, 120, 255, 0.18);
+  border-radius: 0;
+}
+
+.range-day--start,
+.range-day--end {
+  background: var(--color-primary) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* ===================================================
+   Спеціальне маркування для днів 8+ годин
+=================================================== */
+
+.month-calendar__cell-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.super-day-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.super-day-badge__icon {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.75));
+}
+
+.calendar-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cal-cell__super-sparkle {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.9));
+  pointer-events: none;
+}
+
+.calendar-cell--super {
+  border-color: rgba(251, 191, 36, 0.7) !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.35) !important;
+}
+
+.calendar-tooltip__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.calendar-tooltip__super-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ===================================================
+   Адаптація світлої теми для сторінки статистики
+=================================================== */
+
+[data-theme="light"] {
+  .calendar-cell--0 {
+    background: rgba(0, 0, 0, 0.035) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  }
+
+  .calendar-cell--0:hover {
+    background: rgba(0, 0, 0, 0.06) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+  }
+
+  .calendar-cell--0 .month-calendar__day-number {
+    color: var(--color-text-muted) !important;
+  }
+
+  .calendar-view-toggle,
+  .calendar-nav {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .calendar-view-toggle__btn {
+    color: var(--color-text-secondary);
+  }
+
+  .calendar-view-toggle__btn--active {
+    background: #ffffff;
+    color: var(--color-text);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .calendar-nav__btn {
+    color: var(--color-text-secondary);
+  }
+
+  .calendar-nav__btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--color-text);
+  }
+
+  .stat-mini-card {
+    background: rgba(0, 0, 0, 0.025);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .stat-mini-card:hover {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .stat-mini-card__icon {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--color-primary);
+  }
+
+  .stat-mini-card__icon--gold {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+  }
+
+  .stat-mini-card__subtext {
+    color: var(--color-text-muted);
+  }
+
+  .calendar-cell--under-2 .month-calendar__day-number,
+  .calendar-cell--under-2 .month-calendar__day-hours {
+    color: var(--color-text);
+    text-shadow: none;
+  }
+}
