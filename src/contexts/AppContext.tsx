@@ -13,6 +13,14 @@ const defaultSettings: Settings = {
   streakThresholdHours: 1,
 };
 
+// Палітра акцентних кольорів
+const ACCENT_PALETTE: Record<string, { primary: string; hover: string }> = {
+  blue: { primary: '#3f78ff', hover: '#5287ff' },
+  purple: { primary: '#8b5cf6', hover: '#a78bfa' },
+  turquoise: { primary: '#14b8a6', hover: '#2dd4bf' },
+  green: { primary: '#22c55e', hover: '#4ade80' },
+};
+
 interface AppProviderProps {
   children: ReactNode;
 }
@@ -31,23 +39,37 @@ export function AppProvider({ children }: AppProviderProps) {
 
   const [tasks, setTasks] = useLocalStorage<Task[]>('focustime-tasks', []);
 
-  // Синхронізація теми та акцентного кольору з атрибутами HTML
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', settings.theme);
-    if (settings.accentColor) {
-      document.documentElement.setAttribute('data-accent', settings.accentColor);
-    }
-  }, [settings.theme, settings.accentColor]);
+  const activeTheme = settings.theme || defaultSettings.theme;
+  const activeAccent = settings.accentColor || defaultSettings.accentColor;
 
-  // Якщо в localStorage збереглися старі налаштування без streakThresholdHours
+  // Глобальне застосування теми, дата-атрибутів та CSS-змінних на всіх сторінках
   useEffect(() => {
-    if (settings.streakThresholdHours === undefined) {
+    document.documentElement.setAttribute('data-theme', activeTheme);
+    document.documentElement.setAttribute('data-accent', activeAccent);
+
+    const colors = ACCENT_PALETTE[activeAccent] || ACCENT_PALETTE.blue;
+    document.documentElement.style.setProperty('--color-primary', colors.primary);
+    document.documentElement.style.setProperty('--color-primary-hover', colors.hover);
+  }, [activeTheme, activeAccent]);
+
+  // Міграція налаштувань у localStorage
+  useEffect(() => {
+    const isMissingFields =
+      settings.streakThresholdHours === undefined ||
+      !settings.accentColor ||
+      !settings.theme;
+
+    if (isMissingFields) {
       setSettings((prev) => ({
+        ...defaultSettings,
         ...prev,
-        streakThresholdHours: 1,
+        accentColor: prev.accentColor || defaultSettings.accentColor,
+        theme: prev.theme || defaultSettings.theme,
+        streakThresholdHours:
+          prev.streakThresholdHours ?? defaultSettings.streakThresholdHours,
       }));
     }
-  }, [settings.streakThresholdHours, setSettings]);
+  }, [settings, setSettings]);
 
   return (
     <AppContext.Provider

@@ -234,11 +234,11 @@
 .timer-card-panel {
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 20px 22px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  min-height: 280px;
+  min-height: 325px;
   min-width: 0;
 }
 
@@ -285,7 +285,7 @@
 }
 
 /* ========================================
-   4. Блок "Сьогодні" (Фікс переносу часу)
+   4. Блок "Сьогодні"
 ======================================== */
 
 .today-panel__summary {
@@ -327,7 +327,7 @@
   background: rgba(0, 0, 0, 0.22);
   border-radius: 999px;
   overflow: hidden;
-  margin-bottom: 26px;
+  margin-bottom: 20px;
 }
 
 .today-panel__goal-fill {
@@ -340,10 +340,9 @@
 .today-areas-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
-/* Збільшено ширину під час з 60px до 76px, зменшено прогрес-бар */
 .today-area-row {
   display: grid;
   grid-template-columns: 100px 76px 1fr 36px;
@@ -375,7 +374,6 @@
   text-overflow: ellipsis;
 }
 
-/* Час завжди строго в 1 рядок */
 .today-area-row__hours {
   color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
@@ -411,11 +409,10 @@
 .tasks-panel {
   display: flex;
   flex-direction: column;
-  height: 290px;
+  height: 325px;
   min-width: 0;
 }
 
-/* Кнопки керування в шапці завдань */
 /* Кнопки керування в шапці завдань */
 .tasks-header-actions {
   display: flex;
@@ -449,10 +446,70 @@
   color: var(--color-primary);
 }
 
-.tasks-header-btn--danger:hover {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.25);
+.tasks-header-btn--danger:hover,
+.tasks-header-btn--active-danger {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.28) !important;
+  color: #f87171 !important;
+}
+
+/* Випадне віконце очищення */
+.tasks-delete-menu-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.tasks-delete-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+  min-width: 190px;
+  padding: 4px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: menuInstantAppear 90ms ease-out forwards;
+}
+
+.tasks-delete-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: all 120ms ease;
+  border: none;
+}
+
+.tasks-delete-dropdown__item:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.tasks-delete-dropdown__item:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.tasks-delete-dropdown__item--danger {
   color: #f87171;
+}
+
+.tasks-delete-dropdown__item--danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
 }
 
 .tasks-panel__counter {
@@ -470,12 +527,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .tasks-input {
   flex: 1;
-  padding: 8px 12px;
+  padding: 7px 12px;
   background: rgba(0, 0, 0, 0.22);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -522,7 +579,7 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   padding-right: 4px;
 }
 
@@ -546,9 +603,9 @@
 /* Рядок завдання */
 .task-item {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 7px 10px;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 9px;
   border-radius: var(--radius-sm);
   background: transparent;
   border: 1px solid transparent;
@@ -582,7 +639,6 @@
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .task-checkbox {
@@ -615,7 +671,6 @@
   height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
-  margin-top: 5px;
 }
 
 .task-item__area-dot--empty {
@@ -631,8 +686,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 4px;
   background: transparent;
   color: var(--color-text-muted);
@@ -650,7 +705,7 @@
   color: var(--color-text);
 }
 
-/* Дропдаун меню завдань: відкривається всередину картки */
+/* Дропдаун дій окремого завдання */
 .task-menu-backdrop {
   position: fixed !important;
   inset: 0 !important;
@@ -670,7 +725,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin: 0 !important; /* Прибирає зміщення */
+  margin: 0 !important;
   animation: menuInstantAppear 90ms ease-out forwards;
 }
 
@@ -754,6 +809,17 @@
 
   .tasks-header-btn:hover {
     background: rgba(0, 0, 0, 0.06);
+    color: var(--color-text);
+  }
+
+  .tasks-delete-dropdown {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  }
+
+  .tasks-delete-dropdown__item:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.04);
     color: var(--color-text);
   }
 

@@ -1,23 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Check } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
 import type { AccentColor } from '../types/Settings';
 
-const ACCENTS: { id: AccentColor; label: string; primary: string; hover: string }[] = [
-  { id: 'blue', label: 'Синій', primary: '#3f78ff', hover: '#5287ff' },
-  { id: 'purple', label: 'Фіолетовий', primary: '#8b5cf6', hover: '#a78bfa' },
-  { id: 'turquoise', label: 'Бірюзовий', primary: '#14b8a6', hover: '#2dd4bf' },
-  { id: 'green', label: 'Зелений', primary: '#22c55e', hover: '#4ade80' },
+const ACCENTS: { id: AccentColor; label: string; primary: string }[] = [
+  { id: 'blue', label: 'Синій', primary: '#3f78ff' },
+  { id: 'purple', label: 'Фіолетовий', primary: '#8b5cf6' },
+  { id: 'turquoise', label: 'Бірюзовий', primary: '#14b8a6' },
+  { id: 'green', label: 'Зелений', primary: '#22c55e' },
 ];
 
 export const AccentSelector: React.FC = () => {
   const { settings, setSettings } = useAppContext();
-
-  useEffect(() => {
-    const active = ACCENTS.find((a) => a.id === settings.accentColor) || ACCENTS[0];
-    document.documentElement.style.setProperty('--color-primary', active.primary);
-    document.documentElement.style.setProperty('--color-primary-hover', active.hover);
-  }, [settings.accentColor]);
 
   const handleSelectAccent = (colorId: AccentColor) => {
     setSettings((prev) => ({ ...prev, accentColor: colorId }));

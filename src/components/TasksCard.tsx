@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   CheckSquare,
   Square,
@@ -45,7 +45,11 @@ export const TasksCard: React.FC = () => {
   const [isAreaSubmenuOpen, setIsAreaSubmenuOpen] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-  // Стан для модалки підтвердження очищення всіх завдань
+  // Випадне меню очищення завдань
+  const [isDeleteDropdownOpen, setIsDeleteDropdownOpen] = useState(false);
+  const deleteMenuRef = useRef<HTMLDivElement>(null);
+
+  // Стан для модалки підтвердження повного очищення
   const [isConfirmClearOpen, setIsConfirmClearOpen] = useState(false);
 
   // Сортування за сферами
@@ -53,6 +57,21 @@ export const TasksCard: React.FC = () => {
     'focustime-tasks-sort-area',
     false
   );
+
+  // Закриття випадного меню видалення при кліку поза ним
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (deleteMenuRef.current && !deleteMenuRef.current.contains(e.target as Node)) {
+        setIsDeleteDropdownOpen(false);
+      }
+    };
+    if (isDeleteDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDeleteDropdownOpen]);
 
   const displayedTasks = useMemo(() => {
     if (!sortByArea) return tasks;
@@ -92,9 +111,13 @@ export const TasksCard: React.FC = () => {
     closeMenu();
   };
 
+  const handleDeleteCompleted = () => {
+    setTasks((prev: Task[]) => prev.filter((t: Task) => !t.completed));
+    setIsDeleteDropdownOpen(false);
+  };
+
   const handleOpenClearModal = () => {
-    if (tasks.length === 0) return;
-    closeMenu();
+    setIsDeleteDropdownOpen(false);
     setIsConfirmClearOpen(true);
   };
 
@@ -180,16 +203,42 @@ export const TasksCard: React.FC = () => {
               <ArrowUpDown size={14} />
             </button>
 
-            {/* Видалити всі завдання */}
-            <button
-              type="button"
-              className="tasks-header-btn tasks-header-btn--danger"
-              onClick={handleOpenClearModal}
-              title="Видалити всі завдання"
-              aria-label="Видалити всі завдання"
-            >
-              <Trash2 size={14} />
-            </button>
+            {/* Меню очищення завдань */}
+            <div className="tasks-delete-menu-wrapper" ref={deleteMenuRef}>
+              <button
+                type="button"
+                className={`tasks-header-btn tasks-header-btn--danger ${
+                  isDeleteDropdownOpen ? 'tasks-header-btn--active-danger' : ''
+                }`}
+                onClick={() => setIsDeleteDropdownOpen((prev) => !prev)}
+                title="Очистити завдання"
+                aria-label="Очистити завдання"
+              >
+                <Trash2 size={14} />
+              </button>
+
+              {isDeleteDropdownOpen && (
+                <div className="tasks-delete-dropdown">
+                  <button
+                    type="button"
+                    className="tasks-delete-dropdown__item"
+                    onClick={handleDeleteCompleted}
+                    disabled={completedCount === 0}
+                  >
+                    <CheckSquare size={13} />
+                    <span>Видалити виконані ({completedCount})</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="tasks-delete-dropdown__item tasks-delete-dropdown__item--danger"
+                    onClick={handleOpenClearModal}
+                  >
+                    <Trash2 size={13} />
+                    <span>Видалити всі ({tasks.length})</span>
+                  </button>
+                </div>
+              )}
+            </div>
 
             <span className="tasks-panel__counter">
               {completedCount}/{tasks.length}
