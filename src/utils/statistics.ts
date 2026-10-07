@@ -50,17 +50,27 @@ const MONTH_NAMES_UK = [
   'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
 ];
 
+// Безпечне форматування дати без зсуву часових поясів UTC
+function formatDateKey(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// Визначення понеділка поточного тижня (00:00:00)
 function getStartOfWeek(date: Date): Date {
   const d = new Date(date);
-  const day = (d.getDay() + 6) % 7; // Понеділок = 0
+  const day = (d.getDay() + 6) % 7; // Понеділок = 0, Неділя = 6
   d.setDate(d.getDate() - day);
   d.setHours(0, 0, 0, 0);
   return d;
 }
 
+// Форматування діапазону з понеділка по неділю
 function formatWeekRange(startOfWeek: Date): string {
   const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(endOfWeek.getDate() + 6);
+  endOfWeek.setDate(endOfWeek.getDate() + 6); // +6 днів веде строго на неділю
 
   const sDay = startOfWeek.getDate();
   const eDay = endOfWeek.getDate();
@@ -128,7 +138,8 @@ export function calculateStatistics(
   // 1. Найкращий день за період
   const dayTotals: Record<string, number> = {};
   filteredSessions.forEach((s) => {
-    const dKey = s.startTime.split('T')[0];
+    const sDate = new Date(s.startTime);
+    const dKey = formatDateKey(sDate);
     dayTotals[dKey] = (dayTotals[dKey] || 0) + s.duration;
   });
 
@@ -138,21 +149,21 @@ export function calculateStatistics(
   Object.entries(dayTotals).forEach(([dKey, sec]) => {
     if (sec > maxDaySeconds) {
       maxDaySeconds = sec;
-      const parts = dKey.split('-');
-      const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      const [y, m, d] = dKey.split('-').map(Number);
+      const dayDate = new Date(y, m - 1, d);
       bestDay = {
-        formattedDate: `${d.getDate()} ${MONTH_NAMES_UK[d.getMonth()].toLowerCase()}`,
+        formattedDate: `${dayDate.getDate()} ${MONTH_NAMES_UK[dayDate.getMonth()].toLowerCase()}`,
         seconds: sec,
       };
     }
   });
 
-  // 2. Найкращий тиждень за період
+  // 2. Найкращий тиждень за період (строго Понеділок – Неділя)
   const weekTotals: Record<string, number> = {};
   filteredSessions.forEach((s) => {
     const sDate = new Date(s.startTime);
     const startOfWeek = getStartOfWeek(sDate);
-    const wKey = startOfWeek.toISOString().split('T')[0];
+    const wKey = formatDateKey(startOfWeek);
     weekTotals[wKey] = (weekTotals[wKey] || 0) + s.duration;
   });
 

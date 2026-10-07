@@ -1,5 +1,5 @@
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import type { AreaStat } from '../utils/statistics';
 import { formatDuration } from '../utils/time';
 
@@ -39,26 +39,6 @@ export const AreaDistributionCard: React.FC<AreaDistributionCardProps> = ({
           <div className="area-distribution-chart">
             <ResponsiveContainer width={195} height={195}>
               <PieChart>
-                <Tooltip
-                  isAnimationActive={false}
-                  allowEscapeViewBox={{ x: true, y: true }}
-                  wrapperStyle={{ zIndex: 999, pointerEvents: 'none' }}
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      const data = payload[0];
-                      const sec = Number(data.value);
-                      return (
-                        <div className="chart-tooltip-box">
-                          <span style={{ color: data.payload.color }}>
-                            {data.name}
-                          </span>
-                          <strong>{formatDuration(sec)}</strong>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
                 <Pie
                   data={chartData}
                   cx="50%"
@@ -68,6 +48,7 @@ export const AreaDistributionCard: React.FC<AreaDistributionCardProps> = ({
                   paddingAngle={3}
                   dataKey="value"
                   stroke="none"
+                  pointerEvents="none"
                 >
                   {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -78,7 +59,6 @@ export const AreaDistributionCard: React.FC<AreaDistributionCardProps> = ({
 
             {/* Текст у центрі діаграми */}
             <div className="area-pie-center-label">
-              <span className="area-pie-center-label__sub">Всього</span>
               <span className="area-pie-center-label__val">
                 {formatDuration(totalSeconds)}
               </span>

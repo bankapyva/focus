@@ -436,3 +436,78 @@
   text-align: center;
   user-select: none;
 }
+
+/* ========================================
+   Мобільна адаптація налаштувань
+======================================== */
+@media (max-width: 768px) {
+  .settings-page {
+    gap: 16px;
+  }
+
+  .settings-page__title {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .settings-section {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .settings-section__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .settings-section__header button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .time-selector-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .time-presets-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .settings-pill {
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 12px;
+  }
+
+  .time-stepper {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .time-stepper__value {
+    flex: 1;
+  }
+
+  .settings-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .theme-switch-group {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .theme-switch-card {
+    justify-content: center;
+  }
+}

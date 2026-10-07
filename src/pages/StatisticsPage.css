@@ -1160,3 +1160,81 @@
     text-shadow: none;
   }
 }
+
+/* ========================================
+   Мобільна адаптація статистики
+======================================== */
+@media (max-width: 768px) {
+  .stats-page {
+    gap: 16px;
+  }
+
+  .stats-page__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .stats-page__title {
+    font-size: 24px;
+  }
+
+  .period-selector {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+
+  .period-selector__btn {
+    padding: 6px 4px;
+    font-size: 12px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .stats-grid-2col {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .stats-panel {
+    padding: 16px;
+  }
+
+  /* Розподіл за сферами: діаграма зверху, таблиця під нею */
+  .area-distribution-body {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 16px;
+  }
+
+  .area-distribution-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .calendar-card__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .calendar-card__controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .stats-overview-grid {
+    gap: 8px !important;
+  }
+
+  .stat-mini-card {
+    padding: 12px;
+    min-height: 80px;
+  }
+
+  .stat-mini-card__value {
+    font-size: 17px;
+  }
+}

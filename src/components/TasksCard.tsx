@@ -9,6 +9,7 @@ import {
   Tag,
   ArrowUpDown,
   X,
+  Pencil,
 } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
 import useLocalStorage from '../hooks/useLocalStorage';
@@ -40,6 +41,10 @@ export const TasksCard: React.FC = () => {
   const { tasks, setTasks, areas } = useAppContext();
   const [newTitle, setNewTitle] = useState('');
 
+  // Редагування завдання
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
+
   // Меню опцій над окремим завданням
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
   const [isAreaSubmenuOpen, setIsAreaSubmenuOpen] = useState(false);
@@ -49,7 +54,7 @@ export const TasksCard: React.FC = () => {
   const [isDeleteDropdownOpen, setIsDeleteDropdownOpen] = useState(false);
   const deleteMenuRef = useRef<HTMLDivElement>(null);
 
-  // Стан для модалки підтвердження повного очищення
+  // Модалка підтвердження повного очищення
   const [isConfirmClearOpen, setIsConfirmClearOpen] = useState(false);
 
   // Сортування за сферами
@@ -58,7 +63,6 @@ export const TasksCard: React.FC = () => {
     false
   );
 
-  // Закриття випадного меню видалення при кліку поза ним
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (deleteMenuRef.current && !deleteMenuRef.current.contains(e.target as Node)) {
@@ -101,6 +105,7 @@ export const TasksCard: React.FC = () => {
   };
 
   const toggleTask = (taskId: string) => {
+    if (editingTaskId === taskId) return;
     setTasks((prev: Task[]) =>
       prev.map((t: Task) => (t.id === taskId ? { ...t, completed: !t.completed } : t))
     );
@@ -109,6 +114,30 @@ export const TasksCard: React.FC = () => {
   const deleteTask = (taskId: string) => {
     setTasks((prev: Task[]) => prev.filter((t: Task) => t.id !== taskId));
     closeMenu();
+  };
+
+  const handleStartEdit = (taskId: string) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+    setEditingTaskId(taskId);
+    setEditingTitle(task.title);
+    closeMenu();
+  };
+
+  const handleSaveEdit = (taskId: string) => {
+    const trimmed = editingTitle.trim();
+    if (trimmed) {
+      setTasks((prev: Task[]) =>
+        prev.map((t: Task) => (t.id === taskId ? { ...t, title: trimmed } : t))
+      );
+    }
+    setEditingTaskId(null);
+    setEditingTitle('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTaskId(null);
+    setEditingTitle('');
   };
 
   const handleDeleteCompleted = () => {
@@ -158,16 +187,22 @@ export const TasksCard: React.FC = () => {
   };
 
   const handleDragStart = (index: number) => {
-    if (sortByArea) return;
     closeMenu();
     setDraggedIndex(index);
   };
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
-    if (sortByArea || draggedIndex === null || draggedIndex === index) return;
+    if (draggedIndex === null || draggedIndex === index) return;
 
-    const updated = [...tasks];
+    // Якщо сортування увімкнене — пересувати можна лише в межах однієї сфери
+    if (sortByArea) {
+      const draggedTask = displayedTasks[draggedIndex];
+      const targetTask = displayedTasks[index];
+      if (draggedTask.areaId !== targetTask.areaId) return;
+    }
+
+    const updated = [...displayedTasks];
     const movedItem = updated.splice(draggedIndex, 1)[0];
     updated.splice(index, 0, movedItem);
 
@@ -274,6 +309,7 @@ export const TasksCard: React.FC = () => {
           displayedTasks.map((task: Task, index: number) => {
             const taskArea = areas.find((a) => a.id === task.areaId);
             const isDragging = draggedIndex === index;
+            const isEditing = editingTaskId === task.id;
 
             const dynamicStyle: React.CSSProperties = taskArea
               ? {
@@ -285,7 +321,7 @@ export const TasksCard: React.FC = () => {
             return (
               <div
                 key={task.id}
-                draggable={!sortByArea}
+                draggable={!isEditing}
                 onDragStart={() => handleDragStart(index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
@@ -306,12 +342,33 @@ export const TasksCard: React.FC = () => {
                   )}
                 </button>
 
-                <span
-                  className="task-item__title"
-                  onClick={() => toggleTask(task.id)}
-                >
-                  {task.title}
-                </span>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    className="tasks-input"
+                    value={editingTitle}
+                    onChange={(e) => setEditingTitle(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveEdit(task.id);
+                      if (e.key === 'Escape') handleCancelEdit();
+                    }}
+                    onBlur={() => handleSaveEdit(task.id)}
+                    autoFocus
+                    style={{
+                      padding: '2px 8px',
+                      fontSize: '13px',
+                      height: '24px',
+                      flex: 1,
+                    }}
+                  />
+                ) : (
+                  <span
+                    className="task-item__title"
+                    onClick={() => toggleTask(task.id)}
+                  >
+                    {task.title}
+                  </span>
+                )}
 
                 {taskArea && (
                   <span
@@ -353,6 +410,14 @@ export const TasksCard: React.FC = () => {
           >
             {!isAreaSubmenuOpen ? (
               <>
+                <button
+                  type="button"
+                  className="task-menu-dropdown__btn"
+                  onClick={() => handleStartEdit(menuPosition.taskId)}
+                >
+                  <Pencil size={13} />
+                  <span>Редагувати</span>
+                </button>
                 <button
                   type="button"
                   className="task-menu-dropdown__btn"

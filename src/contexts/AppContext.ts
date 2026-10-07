@@ -17,6 +17,13 @@ export interface AppContextValue {
   >;
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+
+  // Поля авторизації та хмари
+  currentUser: string | null;
+  setCurrentUser: React.Dispatch<React.SetStateAction<string | null>>;
+  isAuthModalOpen: boolean;
+  setIsAuthModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleLogout: () => Promise<void>;
 }
 
 export const AppContext = createContext<AppContextValue | undefined>(undefined);

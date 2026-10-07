@@ -843,3 +843,63 @@
     background: rgba(0, 0, 0, 0.03);
   }
 }
+
+/* ========================================
+   Мобільна адаптація головного екрана
+======================================== */
+@media (max-width: 768px) {
+  .timer-page {
+    gap: 16px;
+  }
+
+  .timer-page__title {
+    font-size: 24px;
+  }
+
+  /* Акцентний, вищий блок таймера */
+  .timer-hero {
+    padding: 56px 16px 44px;
+    min-height: 410px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Збільшені цифри таймера (адаптуються під будь-який екран телефону) */
+  .timer-hero__display {
+    font-size: clamp(68px, 17vw, 84px);
+    letter-spacing: -2.5px;
+    margin-bottom: 26px;
+  }
+
+  /* Зручніший селектор сфери */
+  .timer-hero__area-selector {
+    padding: 8px 18px;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  /* Велика акцентна кнопка */
+  .timer-hero__btn {
+    width: 100%;
+    max-width: 290px;
+    padding: 15px 24px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* Перемикаємо нижні блоки в одну колонку */
+  .timer-bottom-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .today-area-row {
+    grid-template-columns: minmax(70px, 1.2fr) 60px 1fr 32px;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .tasks-panel {
+    height: 380px;
+  }
+}

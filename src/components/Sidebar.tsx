@@ -3,9 +3,10 @@ import { NavLink } from 'react-router-dom';
 import { Timer, BarChart3, Settings as SettingsIcon, Clock } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
 import { useTimer } from '../hooks/useTimer';
+import { AuthModal } from './AuthModal';
 
 export const Sidebar: React.FC = () => {
-  const { areas } = useAppContext();
+  const { areas, isAuthModalOpen, setIsAuthModalOpen, setCurrentUser } = useAppContext();
   const { isActive, activeTimer } = useTimer();
 
   const activeArea = areas.find((a) => a.id === activeTimer?.areaId);
@@ -58,7 +59,11 @@ export const Sidebar: React.FC = () => {
       <div className="sidebar__status">
         <div
           className="sidebar__status-dot"
-          style={isActive ? { background: '#22c55e', boxShadow: '0 0 10px rgba(34, 197, 94, 0.4)' } : undefined}
+          style={
+            isActive
+              ? { background: '#22c55e', boxShadow: '0 0 10px rgba(34, 197, 94, 0.4)' }
+              : undefined
+          }
         />
         <div className="sidebar__status-content">
           <span className="sidebar__status-title">
@@ -71,6 +76,13 @@ export const Sidebar: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Фонова модалка входу */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={(name) => setCurrentUser(name)}
+      />
     </aside>
   );
 };

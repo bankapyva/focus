@@ -472,3 +472,72 @@ body:has(.modal-backdrop) .sidebar {
   font-weight: 700;
   color: var(--color-text);
 }
+
+/* ========================================
+   Мобільна адаптація (до 768px)
+======================================== */
+@media (max-width: 768px) {
+  .app-content {
+    margin-left: 0;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(80px + env(safe-area-inset-bottom, 20px));
+  }
+
+  /* Перетворення сайдбара на нижній Tab Bar */
+  .sidebar {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 16px));
+    background: rgba(13, 20, 29, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: none;
+    border-top: 1px solid var(--color-border);
+    z-index: 1000;
+  }
+
+  /* На мобільному ховаємо логотип та статус-крапку з сайдбара */
+  .sidebar__logo,
+  .sidebar__status {
+    display: none !important;
+  }
+
+  .sidebar__navigation {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    gap: 0;
+  }
+
+  .sidebar__link {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    min-height: 48px;
+    padding: 4px 6px;
+    font-size: 11px;
+    border-radius: var(--radius-sm);
+  }
+
+  .sidebar__link svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .page h1 {
+    font-size: 26px;
+  }
+
+  .modal-card {
+    max-width: calc(100vw - 32px);
+    padding: 20px 16px;
+  }
+}
