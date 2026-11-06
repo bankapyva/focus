@@ -1,19 +1,13 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
-  CheckSquare,
-  Square,
-  Check,
-  Plus,
-  MoreHorizontal,
-  Trash2,
-  Tag,
-  ArrowUpDown,
-  X,
-  Pencil,
+  CheckSquare, Square, Check, Plus, MoreHorizontal,
+  Trash2, Tag, ArrowUpDown, X, Pencil, Pin, PinOff
 } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { useTranslation } from '../hooks/useTranslation';
 import type { Task } from '../types/Task';
+import { getAreaName } from '../utils/areaHelper';
 
 function hexToRgba(hex: string, alpha: number): string {
   const cleanHex = hex.replace('#', '');
@@ -39,29 +33,18 @@ interface MenuPosition {
 
 export const TasksCard: React.FC = () => {
   const { tasks, setTasks, areas } = useAppContext();
+  const { t, lang } = useTranslation();
   const [newTitle, setNewTitle] = useState('');
 
-  // Редагування завдання
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
-
-  // Меню опцій над окремим завданням
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
   const [isAreaSubmenuOpen, setIsAreaSubmenuOpen] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-
-  // Випадне меню очищення завдань
   const [isDeleteDropdownOpen, setIsDeleteDropdownOpen] = useState(false);
   const deleteMenuRef = useRef<HTMLDivElement>(null);
-
-  // Модалка підтвердження повного очищення
   const [isConfirmClearOpen, setIsConfirmClearOpen] = useState(false);
-
-  // Сортування за сферами
-  const [sortByArea, setSortByArea] = useLocalStorage<boolean>(
-    'focustime-tasks-sort-area',
-    false
-  );
+  const [sortByArea, setSortByArea] = useLocalStorage<boolean>('focustime-tasks-sort-area', false);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -72,34 +55,40 @@ export const TasksCard: React.FC = () => {
     if (isDeleteDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isDeleteDropdownOpen]);
 
   const displayedTasks = useMemo(() => {
-    if (!sortByArea) return tasks;
-
-    return [...tasks].sort((a, b) => {
-      const indexA = a.areaId ? areas.findIndex((ar) => ar.id === a.areaId) : 9999;
-      const indexB = b.areaId ? areas.findIndex((ar) => ar.id === b.areaId) : 9999;
-      return indexA - indexB;
+    const sorted = [...tasks];
+    if (sortByArea) {
+      sorted.sort((a, b) => {
+        const indexA = a.areaId ? areas.findIndex((ar) => ar.id === a.areaId) : 9999;
+        const indexB = b.areaId ? areas.findIndex((ar) => ar.id === b.areaId) : 9999;
+        return indexA - indexB;
+      });
+    }
+    sorted.sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      if (a.completed && !b.completed) return 1;
+      if (!a.completed && b.completed) return -1;
+      return 0;
     });
+    return sorted;
   }, [tasks, sortByArea, areas]);
 
   const handleAddTask = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const trimmed = newTitle.trim();
     if (!trimmed) return;
-
     const newTask: Task = {
       id: crypto.randomUUID(),
       title: trimmed,
       completed: false,
       areaId: null,
       createdAt: new Date().toISOString(),
+      isPinned: false,
     };
-
     setTasks((prev: Task[]) => [newTask, ...prev]);
     setNewTitle('');
   };
@@ -109,6 +98,13 @@ export const TasksCard: React.FC = () => {
     setTasks((prev: Task[]) =>
       prev.map((t: Task) => (t.id === taskId ? { ...t, completed: !t.completed } : t))
     );
+  };
+
+  const togglePinTask = (taskId: string) => {
+    setTasks((prev: Task[]) =>
+      prev.map((t: Task) => (t.id === taskId ? { ...t, isPinned: !t.isPinned } : t))
+    );
+    closeMenu();
   };
 
   const deleteTask = (taskId: string) => {
@@ -167,11 +163,9 @@ export const TasksCard: React.FC = () => {
       closeMenu();
       return;
     }
-
     const rect = e.currentTarget.getBoundingClientRect();
     const spaceBelow = window.innerHeight - rect.bottom;
     const openUpwards = spaceBelow < 180;
-
     setMenuPosition({
       taskId,
       right: window.innerWidth - rect.right,
@@ -194,18 +188,14 @@ export const TasksCard: React.FC = () => {
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index) return;
-
-    // Якщо сортування увімкнене — пересувати можна лише в межах однієї сфери
     if (sortByArea) {
       const draggedTask = displayedTasks[draggedIndex];
       const targetTask = displayedTasks[index];
       if (draggedTask.areaId !== targetTask.areaId) return;
     }
-
     const updated = [...displayedTasks];
     const movedItem = updated.splice(draggedIndex, 1)[0];
     updated.splice(index, 0, movedItem);
-
     setDraggedIndex(index);
     setTasks(updated);
   };
@@ -218,27 +208,24 @@ export const TasksCard: React.FC = () => {
 
   return (
     <div className="timer-card-panel tasks-panel">
-      {/* Шапка панелі завдань */}
       <div className="timer-card-panel__header" style={{ marginBottom: '14px' }}>
         <div className="timer-card-panel__title-group">
           <CheckSquare size={16} />
-          <h2 className="timer-card-panel__title">Завдання</h2>
+          <h2 className="timer-card-panel__title">{t('tasks.title')}</h2>
         </div>
 
         {tasks.length > 0 && (
           <div className="tasks-header-actions">
-            {/* Сортування за сферами */}
             <button
               type="button"
               className={`tasks-header-btn ${sortByArea ? 'tasks-header-btn--active' : ''}`}
               onClick={() => setSortByArea((prev) => !prev)}
-              title={sortByArea ? 'Вимкнути сортування' : 'Сортувати за сферами'}
-              aria-label="Сортувати за сферами"
+              title={sortByArea ? t('tasks.sortOff') : t('tasks.sortOn')}
+              aria-label={t('tasks.sortOn')}
             >
               <ArrowUpDown size={14} />
             </button>
 
-            {/* Меню очищення завдань */}
             <div className="tasks-delete-menu-wrapper" ref={deleteMenuRef}>
               <button
                 type="button"
@@ -246,8 +233,8 @@ export const TasksCard: React.FC = () => {
                   isDeleteDropdownOpen ? 'tasks-header-btn--active-danger' : ''
                 }`}
                 onClick={() => setIsDeleteDropdownOpen((prev) => !prev)}
-                title="Очистити завдання"
-                aria-label="Очистити завдання"
+                title={t('tasks.clearAllBtn')}
+                aria-label={t('tasks.clearAllBtn')}
               >
                 <Trash2 size={14} />
               </button>
@@ -261,7 +248,7 @@ export const TasksCard: React.FC = () => {
                     disabled={completedCount === 0}
                   >
                     <CheckSquare size={13} />
-                    <span>Видалити виконані ({completedCount})</span>
+                    <span>{t('tasks.delCompleted')} ({completedCount})</span>
                   </button>
                   <button
                     type="button"
@@ -269,7 +256,7 @@ export const TasksCard: React.FC = () => {
                     onClick={handleOpenClearModal}
                   >
                     <Trash2 size={13} />
-                    <span>Видалити всі ({tasks.length})</span>
+                    <span>{t('tasks.delAll')} ({tasks.length})</span>
                   </button>
                 </div>
               )}
@@ -286,7 +273,7 @@ export const TasksCard: React.FC = () => {
         <input
           type="text"
           className="tasks-input"
-          placeholder="Додати завдання..."
+          placeholder={t('tasks.addPlaceholder')}
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
         />
@@ -303,13 +290,14 @@ export const TasksCard: React.FC = () => {
       <div className="tasks-list" onScroll={closeMenu}>
         {displayedTasks.length === 0 ? (
           <div className="timer-card-panel__empty" style={{ minHeight: '120px' }}>
-            Немає завдань
+            {t('tasks.empty')}
           </div>
         ) : (
           displayedTasks.map((task: Task, index: number) => {
             const taskArea = areas.find((a) => a.id === task.areaId);
             const isDragging = draggedIndex === index;
             const isEditing = editingTaskId === task.id;
+            const isPinned = task.isPinned;
 
             const dynamicStyle: React.CSSProperties = taskArea
               ? {
@@ -365,7 +353,9 @@ export const TasksCard: React.FC = () => {
                   <span
                     className="task-item__title"
                     onClick={() => toggleTask(task.id)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
                   >
+                    {isPinned && <Pin size={12} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />}
                     {task.title}
                   </span>
                 )}
@@ -374,7 +364,7 @@ export const TasksCard: React.FC = () => {
                   <span
                     className="task-item__area-dot"
                     style={{ backgroundColor: taskArea.color }}
-                    title={taskArea.name}
+                    title={getAreaName(taskArea, lang)} // Переклад тултипу крапки
                   />
                 )}
 
@@ -394,11 +384,9 @@ export const TasksCard: React.FC = () => {
         )}
       </div>
 
-      {/* Меню дій над окремим завданням */}
       {menuPosition && (
         <>
           <div className="task-menu-backdrop" onClick={closeMenu} />
-
           <div
             className="task-menu-dropdown task-menu-dropdown--fixed"
             style={{
@@ -413,10 +401,27 @@ export const TasksCard: React.FC = () => {
                 <button
                   type="button"
                   className="task-menu-dropdown__btn"
+                  onClick={() => togglePinTask(menuPosition.taskId)}
+                >
+                  {tasks.find((t) => t.id === menuPosition.taskId)?.isPinned ? (
+                    <>
+                      <PinOff size={13} />
+                      <span>{t('tasks.menu.unpin')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Pin size={13} />
+                      <span>{t('tasks.menu.pin')}</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="task-menu-dropdown__btn"
                   onClick={() => handleStartEdit(menuPosition.taskId)}
                 >
                   <Pencil size={13} />
-                  <span>Редагувати</span>
+                  <span>{t('tasks.menu.edit')}</span>
                 </button>
                 <button
                   type="button"
@@ -424,7 +429,7 @@ export const TasksCard: React.FC = () => {
                   onClick={() => setIsAreaSubmenuOpen(true)}
                 >
                   <Tag size={13} />
-                  <span>Вибрати сферу</span>
+                  <span>{t('tasks.menu.selectArea')}</span>
                 </button>
                 <button
                   type="button"
@@ -432,7 +437,7 @@ export const TasksCard: React.FC = () => {
                   onClick={() => deleteTask(menuPosition.taskId)}
                 >
                   <Trash2 size={13} />
-                  <span>Видалити</span>
+                  <span>{t('tasks.menu.delete')}</span>
                 </button>
               </>
             ) : (
@@ -443,7 +448,7 @@ export const TasksCard: React.FC = () => {
                   onClick={() => assignArea(menuPosition.taskId, null)}
                 >
                   <span className="task-item__area-dot task-item__area-dot--empty" />
-                  <span>Без сфери</span>
+                  <span>{t('tasks.menu.noArea')}</span>
                   {tasks.find((t) => t.id === menuPosition.taskId)?.areaId === null && (
                     <Check size={12} style={{ marginLeft: 'auto' }} />
                   )}
@@ -459,7 +464,8 @@ export const TasksCard: React.FC = () => {
                       className="task-item__area-dot"
                       style={{ backgroundColor: a.color }}
                     />
-                    <span>{a.name}</span>
+                    {/* Використовуємо getAreaName */}
+                    <span>{getAreaName(a, lang)}</span>
                     {tasks.find((t) => t.id === menuPosition.taskId)?.areaId === a.id && (
                       <Check size={12} style={{ marginLeft: 'auto' }} />
                     )}
@@ -471,12 +477,11 @@ export const TasksCard: React.FC = () => {
         </>
       )}
 
-      {/* Модальне вікно підтвердження видалення всіх завдань */}
       {isConfirmClearOpen && (
         <div className="modal-backdrop" onClick={() => setIsConfirmClearOpen(false)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="modal-card__header">
-              <h3 className="modal-card__title">Видалити всі завдання?</h3>
+              <h3 className="modal-card__title">{t('modal.clearTasks.title')}</h3>
               <button
                 type="button"
                 className="modal-card__close-btn"
@@ -488,7 +493,7 @@ export const TasksCard: React.FC = () => {
             </div>
 
             <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-              Ця дія безповоротно видалить усі поточні завдання зі списку ({tasks.length}). Ви впевнені?
+              {t('modal.clearTasks.desc', { count: tasks.length })}
             </p>
 
             <div className="modal-card__actions" style={{ justifyContent: 'flex-end', gap: '8px' }}>
@@ -497,14 +502,14 @@ export const TasksCard: React.FC = () => {
                 className="modal-btn modal-btn--secondary"
                 onClick={() => setIsConfirmClearOpen(false)}
               >
-                Скасувати
+                {t('modal.cancel')}
               </button>
               <button
                 type="button"
                 className="modal-btn modal-btn--danger"
                 onClick={handleConfirmClear}
               >
-                Видалити всі
+                {t('modal.deleteAll')}
               </button>
             </div>
           </div>

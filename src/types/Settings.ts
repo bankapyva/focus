@@ -1,9 +1,11 @@
-export type Theme = 'dark' | 'light';
-export type AccentColor = 'blue' | 'purple' | 'turquoise' | 'green';
+export type Theme = 'dark' | 'light' | 'monochrome';
+export type AccentColor = 'white' | 'blue' | 'purple' | 'turquoise' | 'green';
+export type Language = 'uk' | 'en'; // <-- Новий тип
 
 export interface Settings {
   theme: Theme;
   accentColor: AccentColor;
-  dailyGoalHours?: number; // денна норма в годинах (для прогрес-бару)
-  streakThresholdHours?: number; // мінімум годин для вогника (серії)
+  language: Language; // <-- Нове поле
+  dailyGoalHours: number;
+  streakThresholdHours: number;
 }

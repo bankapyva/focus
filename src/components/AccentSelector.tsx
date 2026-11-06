@@ -1,39 +1,40 @@
 import React from 'react';
-import { Check } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
+import { useTranslation } from '../hooks/useTranslation';
+import { Check } from 'lucide-react';
 import type { AccentColor } from '../types/Settings';
 
-const ACCENTS: { id: AccentColor; label: string; primary: string }[] = [
-  { id: 'blue', label: 'Синій', primary: '#3f78ff' },
-  { id: 'purple', label: 'Фіолетовий', primary: '#8b5cf6' },
-  { id: 'turquoise', label: 'Бірюзовий', primary: '#14b8a6' },
-  { id: 'green', label: 'Зелений', primary: '#22c55e' },
+const ACCENTS: { id: AccentColor; hex: string }[] = [
+  { id: 'white', hex: '#e4e4e7' },
+  { id: 'blue', hex: '#3b82f6' },
+  { id: 'purple', hex: '#8b5cf6' },
+  { id: 'turquoise', hex: '#14b8a6' },
+  { id: 'green', hex: '#22c55e' },
 ];
 
 export const AccentSelector: React.FC = () => {
   const { settings, setSettings } = useAppContext();
+  const { t } = useTranslation();
 
-  const handleSelectAccent = (colorId: AccentColor) => {
-    setSettings((prev) => ({ ...prev, accentColor: colorId }));
+  const handleAccentChange = (accentColor: AccentColor) => {
+    setSettings((prev) => ({ ...prev, accentColor }));
   };
 
   return (
     <div className="settings-row">
-      <h3 className="settings-row__title">Основний акцентний колір</h3>
-
-      <div className="accent-picker">
-        {ACCENTS.map((item) => (
+      <h3 className="settings-row__title">{t('settings.accentColor')}</h3>
+      <div className="area-color-picker">
+        {ACCENTS.map((accent) => (
           <button
-            key={item.id}
+            key={accent.id}
             type="button"
-            className={`accent-picker__item ${
-              settings.accentColor === item.id ? 'accent-picker__item--active' : ''
-            }`}
-            style={{ backgroundColor: item.primary }}
-            onClick={() => handleSelectAccent(item.id)}
-            title={item.label}
+            className="area-color-picker__item"
+            style={{ backgroundColor: accent.hex }}
+            onClick={() => handleAccentChange(accent.id)}
           >
-            {settings.accentColor === item.id && <Check size={14} color="#ffffff" />}
+            {settings.accentColor === accent.id && (
+              <Check size={14} color={accent.id === 'white' ? '#000' : '#fff'} />
+            )}
           </button>
         ))}
       </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import type { StatsPeriod, CustomDateRange } from '../utils/statistics';
 import { DateRangeModal } from './DateRangeModal';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface PeriodSelectorProps {
   period: StatsPeriod;
@@ -15,15 +16,15 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
   onChange,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useTranslation();
 
-  // Форматуємо підпис діапазону для кнопки
   const getCustomLabel = () => {
     if (period === 'custom' && customRange) {
       const s = customRange.startDate.slice(5).replace('-', '.');
       const e = customRange.endDate.slice(5).replace('-', '.');
       return `${s} – ${e}`;
     }
-    return 'Вибір дати';
+    return t('stats.period.custom');
   };
 
   return (
@@ -34,7 +35,7 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
           className={`period-selector__btn ${period === '7d' ? 'period-selector__btn--active' : ''}`}
           onClick={() => onChange('7d')}
         >
-          7 днів
+          {t('stats.period.7d')}
         </button>
 
         <button
@@ -42,7 +43,7 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
           className={`period-selector__btn ${period === '30d' ? 'period-selector__btn--active' : ''}`}
           onClick={() => onChange('30d')}
         >
-          30 днів
+          {t('stats.period.30d')}
         </button>
 
         <button
@@ -50,7 +51,7 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
           className={`period-selector__btn ${period === 'all' ? 'period-selector__btn--active' : ''}`}
           onClick={() => onChange('all')}
         >
-          Весь час
+          {t('stats.period.all')}
         </button>
 
         <button

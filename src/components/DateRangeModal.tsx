@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { CustomDateRange } from '../utils/statistics';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface DateRangeModalProps {
   initialRange?: CustomDateRange;
@@ -8,9 +9,14 @@ interface DateRangeModalProps {
   onClose: () => void;
 }
 
-const MONTH_NAMES = [
+const MONTH_NAMES_UK = [
   'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
   'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
+];
+
+const MONTH_NAMES_EN = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
 export const DateRangeModal: React.FC<DateRangeModalProps> = ({
@@ -18,6 +24,10 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
   onApply,
   onClose,
 }) => {
+  const { t, lang } = useTranslation();
+  const MONTH_NAMES = lang === 'en' ? MONTH_NAMES_EN : MONTH_NAMES_UK;
+  const WEEKDAYS = lang === 'en' ? ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'] : ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+
   const todayStr = new Date().toISOString().split('T')[0];
 
   const [startDate, setStartDate] = useState<string>(
@@ -27,7 +37,6 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
     initialRange?.endDate || todayStr
   );
 
-  // Поточний місяць у календарику вибору
   const initDate = new Date(startDate || todayStr);
   const [viewYear, setViewYear] = useState(initDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(initDate.getMonth());
@@ -50,13 +59,11 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
     }
   };
 
-  // Клік по дню в календарі
   const handleDayClick = (dayStr: string) => {
     if (!startDate || (startDate && endDate)) {
       setStartDate(dayStr);
       setEndDate('');
     } else {
-      // Якщо вибрана дата раніше за startDate — міняємо місцями
       if (dayStr < startDate) {
         setEndDate(startDate);
         setStartDate(dayStr);
@@ -76,9 +83,8 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
     onClose();
   };
 
-  // Генерація днів місяця
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-  const firstDayOfWeek = (new Date(viewYear, viewMonth, 1).getDay() + 6) % 7; // Понеділок = 0
+  const firstDayOfWeek = (new Date(viewYear, viewMonth, 1).getDay() + 6) % 7; 
 
   const daysCells = [];
   for (let i = 0; i < firstDayOfWeek; i++) {
@@ -93,7 +99,7 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-card date-range-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-card__header">
-          <h3 className="modal-card__title">Вибір періоду</h3>
+          <h3 className="modal-card__title">{t('stats.customDate.title')}</h3>
           <button
             type="button"
             className="modal-card__close-btn"
@@ -103,10 +109,9 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
           </button>
         </div>
 
-        {/* Ручний ввід дат */}
         <div className="date-inputs-row">
           <div className="date-input-group">
-            <label>Від</label>
+            <label>{t('stats.customDate.from')}</label>
             <input
               type="date"
               className="date-text-input"
@@ -116,7 +121,7 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
           </div>
 
           <div className="date-input-group">
-            <label>До</label>
+            <label>{t('stats.customDate.to')}</label>
             <input
               type="date"
               className="date-text-input"
@@ -126,7 +131,6 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
           </div>
         </div>
 
-        {/* Інтерактивний календарик */}
         <div className="range-calendar">
           <div className="range-calendar__nav">
             <button type="button" onClick={handlePrevMonth} className="range-nav-btn">
@@ -141,7 +145,9 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
           </div>
 
           <div className="range-calendar__weekdays">
-            <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Нд</span>
+            {WEEKDAYS.map((day) => (
+              <span key={day}>{day}</span>
+            ))}
           </div>
 
           <div className="range-calendar__grid">
@@ -181,7 +187,7 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
             className="modal-btn modal-btn--secondary"
             onClick={onClose}
           >
-            Скасувати
+            {t('modal.cancel')}
           </button>
           <button
             type="button"
@@ -189,7 +195,7 @@ export const DateRangeModal: React.FC<DateRangeModalProps> = ({
             onClick={handleApply}
             disabled={!startDate}
           >
-            Застосувати
+            {t('stats.customDate.apply')}
           </button>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import type { AreaStat } from '../utils/statistics';
 import { formatDuration } from '../utils/time';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface AreaDistributionCardProps {
   areaStats: AreaStat[];
@@ -14,6 +15,7 @@ export const AreaDistributionCard: React.FC<AreaDistributionCardProps> = ({
   totalSeconds,
   periodLabel,
 }) => {
+  const { t, lang } = useTranslation();
   const activeAreas = areaStats.filter((a) => a.totalSeconds > 0);
 
   const chartData = activeAreas.map((a) => ({
@@ -25,17 +27,16 @@ export const AreaDistributionCard: React.FC<AreaDistributionCardProps> = ({
   return (
     <div className="stats-panel area-distribution-panel">
       <div className="stats-panel__header">
-        <h2 className="stats-panel__title">Розподіл за сферами</h2>
+        <h2 className="stats-panel__title">{t('stats.dist.title')}</h2>
         <span className="stats-panel__period-tag">{periodLabel}</span>
       </div>
 
       {activeAreas.length === 0 ? (
         <div className="area-distribution-empty">
-          Немає даних за обраний період
+          {t('stats.dist.empty')}
         </div>
       ) : (
         <div className="area-distribution-body">
-          {/* Donut діаграма */}
           <div className="area-distribution-chart">
             <ResponsiveContainer width={195} height={195}>
               <PieChart>
@@ -57,21 +58,19 @@ export const AreaDistributionCard: React.FC<AreaDistributionCardProps> = ({
               </PieChart>
             </ResponsiveContainer>
 
-            {/* Текст у центрі діаграми */}
             <div className="area-pie-center-label">
               <span className="area-pie-center-label__val">
-                {formatDuration(totalSeconds)}
+                {formatDuration(totalSeconds, lang)}
               </span>
             </div>
           </div>
 
-          {/* Таблиця сфер */}
           <div className="area-distribution-table-wrap">
             <table className="area-table">
               <thead>
                 <tr className="area-table__header-row">
-                  <th className="area-table__th area-table__th--name">Сфера</th>
-                  <th className="area-table__th area-table__th--hours">Час</th>
+                  <th className="area-table__th area-table__th--name">{t('today.colArea')}</th>
+                  <th className="area-table__th area-table__th--hours">{t('today.colTime')}</th>
                   <th className="area-table__th area-table__th--percent">%</th>
                 </tr>
               </thead>
@@ -86,7 +85,7 @@ export const AreaDistributionCard: React.FC<AreaDistributionCardProps> = ({
                       <span className="area-table__name">{item.name}</span>
                     </td>
                     <td className="area-table__td area-table__td--hours">
-                      {formatDuration(item.totalSeconds)}
+                      {formatDuration(item.totalSeconds, lang)}
                     </td>
                     <td className="area-table__td area-table__td--percent">
                       {item.percentage}%

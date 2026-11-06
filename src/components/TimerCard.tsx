@@ -3,14 +3,16 @@ import { Play, Square, ChevronDown } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
 import { useTimer } from '../hooks/useTimer';
 import { formatTime } from '../utils/time';
+import { useTranslation } from '../hooks/useTranslation';
+import { getAreaName } from '../utils/areaHelper';
 
 export const TimerCard: React.FC = () => {
   const { areas } = useAppContext();
   const { isActive, seconds, startTimer, stopTimer, activeTimer } = useTimer();
+  const { t, lang } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
 
-  // Обчислення актуальної сфери на льоту без виклику useEffect
   const resolvedAreaId =
     activeTimer?.areaId ??
     (selectedAreaId && areas.some((a) => a.id === selectedAreaId) ? selectedAreaId : null) ??
@@ -34,17 +36,15 @@ export const TimerCard: React.FC = () => {
 
   return (
     <div className="timer-hero__center">
-      {/* Великий цифровий дисплей */}
       <div className="timer-hero__display">{formatTime(seconds)}</div>
 
-      {/* Селектор сфери */}
       <div className="timer-hero__area-wrapper" style={{ position: 'relative' }}>
         {areas.length === 0 ? (
           <div
             className="timer-hero__area-selector"
             style={{ opacity: 0.5, cursor: 'default' }}
           >
-            <span>Немає створених сфер</span>
+            <span>{t('timer.noAreas')}</span>
           </div>
         ) : (
           <button
@@ -59,7 +59,8 @@ export const TimerCard: React.FC = () => {
                 style={{ backgroundColor: currentArea.color }}
               />
             )}
-            <span>{currentArea?.name || 'Оберіть сферу'}</span>
+            {/* Безпечно використовуємо getAreaName або fall-back текст */}
+            <span>{currentArea ? getAreaName(currentArea, lang) : t('timer.selectArea')}</span>
             {!isActive && <ChevronDown size={14} />}
           </button>
         )}
@@ -78,14 +79,14 @@ export const TimerCard: React.FC = () => {
                   className="timer-hero__area-dot"
                   style={{ backgroundColor: area.color }}
                 />
-                <span>{area.name}</span>
+                {/* Переклад в дропдауні */}
+                <span>{getAreaName(area, lang)}</span>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Головна кнопка дії */}
       <button
         type="button"
         className={`timer-hero__btn ${isActive ? 'timer-hero__btn--stop' : ''}`}
@@ -98,19 +99,19 @@ export const TimerCard: React.FC = () => {
         }
         title={
           !isActive && areas.length === 0
-            ? 'Спочатку створіть сферу в налаштуваннях'
+            ? t('timer.createFirst')
             : undefined
         }
       >
         {isActive ? (
           <>
             <Square size={16} fill="currentColor" />
-            <span>Завершити сесію</span>
+            <span>{t('timer.stopFocus')}</span>
           </>
         ) : (
           <>
             <Play size={16} fill="currentColor" />
-            <span>{areas.length === 0 ? 'Створіть сферу' : 'Почати роботу'}</span>
+            <span>{areas.length === 0 ? t('timer.createArea') : t('timer.startFocus')}</span>
           </>
         )}
       </button>

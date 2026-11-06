@@ -4,10 +4,15 @@ import { useAppContext } from '../contexts/useAppContext';
 import { useTimer } from '../hooks/useTimer';
 import { formatDuration } from '../utils/time';
 import { calculateCurrentStreak } from '../utils/streaks';
+import { useTranslation } from '../hooks/useTranslation';
+import { getAreaName } from '../utils/areaHelper';
+// ДОДАНО ІМПОРТ ТИПУ Area:
+import type { Area } from '../types/Area';
 
 export const TodayAreas: React.FC = () => {
   const { sessions, areas, settings } = useAppContext();
   const { isActive, seconds, activeTimer } = useTimer();
+  const { t, lang } = useTranslation();
 
   const isToday = (dateString: string) => {
     const date = new Date(dateString);
@@ -29,7 +34,6 @@ export const TodayAreas: React.FC = () => {
 
   const streakThreshold = settings.streakThresholdHours ?? 1;
 
-  // Серія розраховується за порогом streakThresholdHours
   const currentStreak = calculateCurrentStreak(
     sessions,
     isActive ? seconds : 0,
@@ -56,7 +60,7 @@ export const TodayAreas: React.FC = () => {
         ...area,
         seconds: areaTotalSec,
         percentage,
-      };
+      } as Area & { seconds: number; percentage: number }; 
     })
     .filter((item) => item.seconds > 0)
     .sort((a, b) => b.seconds - a.seconds);
@@ -66,19 +70,18 @@ export const TodayAreas: React.FC = () => {
       <div className="timer-card-panel__header" style={{ marginBottom: '14px' }}>
         <div className="timer-card-panel__title-group">
           <Clock size={16} />
-          <h2 className="timer-card-panel__title">Сьогодні</h2>
+          <h2 className="timer-card-panel__title">{t('today.title')}</h2>
         </div>
       </div>
 
-      {/* Загальний час: наприклад "2 год 45 хв" */}
       <div className="today-panel__summary">
         <div className="today-panel__hours-val">
-          {formatDuration(totalTodaySec)}
+          {formatDuration(totalTodaySec, lang)}
         </div>
 
         <div
           className="today-streak-badge"
-          title={`Поточна серія (потрібно ≥ ${streakThreshold} год/день)`}
+          title={t('today.streakTitle', { threshold: streakThreshold })}
         >
           <Flame size={14} className="icon--flame" />
           <span>{currentStreak}</span>
@@ -87,7 +90,7 @@ export const TodayAreas: React.FC = () => {
 
       <div
         className="today-panel__goal-track"
-        title={`Норма: ${goalHours} год (${goalProgress}%)`}
+        title={t('today.goalTitle', { goal: goalHours, progress: goalProgress })}
       >
         <div
           className="today-panel__goal-fill"
@@ -97,7 +100,7 @@ export const TodayAreas: React.FC = () => {
 
       {areasDistribution.length === 0 ? (
         <div className="timer-card-panel__empty" style={{ minHeight: '120px' }}>
-          Сесій за сьогодні ще немає
+          {t('today.noSessions')}
         </div>
       ) : (
         <div className="today-areas-list">
@@ -108,25 +111,15 @@ export const TodayAreas: React.FC = () => {
                   className="today-area-row__dot"
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="today-area-row__name">{item.name}</span>
+                <span className="today-area-row__name">{getAreaName(item, lang)}</span>
               </div>
 
-              {/* Час сфери: наприклад "1 год 20 хв" або "40 хв" */}
-              <span className="today-area-row__hours">
-                {formatDuration(item.seconds)}
-              </span>
-
-              <div className="today-area-row__track">
-                <div
-                  className="today-area-row__fill"
-                  style={{
-                    width: `${item.percentage}%`,
-                    backgroundColor: item.color,
-                  }}
-                />
+              <div className="today-area-row__stats">
+                <span className="today-area-row__hours">
+                  {formatDuration(item.seconds, lang)}
+                </span>
+                <span className="today-area-row__percent">{item.percentage}%</span>
               </div>
-
-              <span className="today-area-row__percent">{item.percentage}%</span>
             </div>
           ))}
         </div>

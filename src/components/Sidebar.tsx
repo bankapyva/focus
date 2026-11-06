@@ -4,24 +4,25 @@ import { Timer, BarChart3, Settings as SettingsIcon, Clock } from 'lucide-react'
 import { useAppContext } from '../contexts/useAppContext';
 import { useTimer } from '../hooks/useTimer';
 import { AuthModal } from './AuthModal';
+import { useTranslation } from '../hooks/useTranslation';
+import { getAreaName } from '../utils/areaHelper';
 
 export const Sidebar: React.FC = () => {
   const { areas, isAuthModalOpen, setIsAuthModalOpen, setCurrentUser } = useAppContext();
   const { isActive, activeTimer } = useTimer();
+  const { t, lang } = useTranslation();
 
   const activeArea = areas.find((a) => a.id === activeTimer?.areaId);
 
   return (
     <aside className="sidebar">
-      {/* Логотип */}
       <NavLink to="/" className="sidebar__logo">
         <div className="sidebar__logo-icon">
           <Clock size={20} />
         </div>
-        <span>FocusTime</span>
+        <span>Focus</span>
       </NavLink>
 
-      {/* Навігація */}
       <nav className="sidebar__navigation">
         <NavLink
           to="/"
@@ -31,7 +32,7 @@ export const Sidebar: React.FC = () => {
           }
         >
           <Timer size={18} />
-          <span>Таймер</span>
+          <span>{t('nav.home')}</span>
         </NavLink>
 
         <NavLink
@@ -41,7 +42,7 @@ export const Sidebar: React.FC = () => {
           }
         >
           <BarChart3 size={18} />
-          <span>Статистика</span>
+          <span>{t('nav.statistics')}</span>
         </NavLink>
 
         <NavLink
@@ -51,11 +52,10 @@ export const Sidebar: React.FC = () => {
           }
         >
           <SettingsIcon size={18} />
-          <span>Налаштування</span>
+          <span>{t('nav.settings')}</span>
         </NavLink>
       </nav>
 
-      {/* Динамічний статус системи внизу */}
       <div className="sidebar__status">
         <div
           className="sidebar__status-dot"
@@ -67,17 +67,17 @@ export const Sidebar: React.FC = () => {
         />
         <div className="sidebar__status-content">
           <span className="sidebar__status-title">
-            {isActive ? 'Зараз працюю' : 'Система готова'}
+            {isActive ? '' : t('status.ready')}
           </span>
           {isActive && activeArea && (
             <span style={{ fontSize: '13px', color: 'var(--color-text)', fontWeight: 500 }}>
-              {activeArea.name}
+              {/* Переклад назви активної сфери */}
+              {getAreaName(activeArea, lang)}
             </span>
           )}
         </div>
       </div>
 
-      {/* Фонова модалка входу */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}

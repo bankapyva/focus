@@ -52,7 +52,7 @@ body {
   background:
     radial-gradient(
       circle at 65% 20%,
-      rgba(46, 91, 180, 0.08),
+      color-mix(in srgb, var(--color-primary) 10%, transparent),
       transparent 35%
     ),
     var(--color-bg);
@@ -154,7 +154,7 @@ ol {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #e9f0ff;
+  color: var(--color-primary);
 }
 
 /* Navigation */
@@ -192,14 +192,14 @@ ol {
 
 .sidebar__link--active {
   color: #ffffff;
-  background: rgba(55, 91, 150, 0.34);
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
   box-shadow:
-    inset 0 0 0 1px rgba(93, 137, 220, 0.08),
-    0 4px 18px rgba(30, 78, 170, 0.08);
+    inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 22%, transparent),
+    0 4px 18px color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .sidebar__link--active svg {
-  color: #5c8dff;
+  color: var(--color-primary);
 }
 
 /* Status */
@@ -217,8 +217,8 @@ ol {
   height: 8px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: #53c7d8;
-  box-shadow: 0 0 10px rgba(83, 199, 216, 0.35);
+  background: var(--color-primary);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--color-primary) 45%, transparent);
 }
 
 .sidebar__status-content {
@@ -253,7 +253,7 @@ ol {
 }
 
 /* ========================================
-   ГЛОБАЛЬНІ СТИЛІ МОДАЛЬНИХ ВІКОН (працюють скрізь)
+   ГЛОБАЛЬНІ СТИЛІ МОДАЛЬНИХ ВІКОН
 ======================================== */
 
 .modal-backdrop {
@@ -453,7 +453,7 @@ body:has(.modal-backdrop) .sidebar {
 }
 
 [data-theme="light"] .sidebar__link--active {
-  background: rgba(63, 120, 255, 0.12);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
   color: var(--color-primary);
 }
 
@@ -482,7 +482,6 @@ body:has(.modal-backdrop) .sidebar {
     padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(80px + env(safe-area-inset-bottom, 20px));
   }
 
-  /* Перетворення сайдбара на нижній Tab Bar */
   .sidebar {
     top: auto;
     bottom: 0;
@@ -502,7 +501,6 @@ body:has(.modal-backdrop) .sidebar {
     z-index: 1000;
   }
 
-  /* На мобільному ховаємо логотип та статус-крапку з сайдбара */
   .sidebar__logo,
   .sidebar__status {
     display: none !important;
@@ -540,4 +538,156 @@ body:has(.modal-backdrop) .sidebar {
     max-width: calc(100vw - 32px);
     padding: 20px 16px;
   }
+}
+
+/* ========================================
+   Монохромна тема (Monochrome)
+======================================== */
+[data-theme="monochrome"] {
+  --color-bg: #09090b;
+  --color-bg-secondary: #121215;
+  
+  --color-surface: #141417;
+  --color-surface-hover: #1f1f23;
+
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-light: rgba(255, 255, 255, 0.1);
+
+  --color-text: #f4f4f5;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+
+  --color-sidebar: #101013;
+}
+
+[data-theme="monochrome"] body {
+  background: var(--color-bg);
+  background-image: none; 
+}
+
+[data-theme="monochrome"] .sidebar {
+  background: var(--color-sidebar) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="monochrome"] .timer-hero__area-selector {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="monochrome"] .tasks-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="monochrome"] .sidebar__link--active {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--color-text);
+  box-shadow: none;
+}
+
+/* ========================================
+   УСІ ІКОНКИ НА ВСІХ СТОРІНКАХ — У КОЛЬОРІ АКЦЕНТУ
+======================================== */
+.sidebar__logo-icon svg,
+.sidebar__link--active svg,
+.timer-card-panel__title-group svg,
+.header-streak-badge svg,
+.today-streak-badge svg,
+.stat-mini-card__icon,
+.stat-mini-card__icon--gold,
+.stat-mini-card__icon svg,
+.stat-mini-card__icon--gold svg,
+.calendar-legend__item svg,
+.super-day-badge__icon,
+.cal-cell__super-sparkle,
+.calendar-tooltip__super-badge svg,
+.lucide-flame,
+.lucide-clock,
+.lucide-check-square,
+.lucide-star,
+.lucide-trophy,
+.lucide-calendar,
+.lucide-crown,
+.lucide-pin,
+.lucide-sparkles {
+  color: var(--color-primary) !important;
+  stroke: var(--color-primary) !important;
+}
+
+/* ========================================
+   Кнопка "Завершити сесію" — приглушена червона
+======================================== */
+.timer-hero__btn--stop,
+.timer-hero__btn--danger,
+.timer-hero__btn--active {
+  background: rgba(239, 68, 68, 0.16) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.32) !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.timer-hero__btn--stop svg,
+.timer-hero__btn--danger svg,
+.timer-hero__btn--active svg {
+  color: #f87171 !important;
+  stroke: #f87171 !important;
+  fill: #f87171 !important;
+}
+
+.timer-hero__btn--stop:hover,
+.timer-hero__btn--danger:hover,
+.timer-hero__btn--active:hover {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border-color: rgba(239, 68, 68, 0.45) !important;
+}
+
+/* ========================================
+   Білий акцентний колір (Читабельний темний текст на всіх кнопках)
+======================================== */
+[data-accent="white"] .timer-hero__btn:not(.timer-hero__btn--stop):not(.timer-hero__btn--danger):not(.timer-hero__btn--active),
+[data-accent="white"] .modal-btn--primary,
+[data-accent="white"] .btn--primary,
+[data-accent="white"] .settings-btn:not(.settings-btn--danger),
+[data-accent="white"] .areas-header__add-btn,
+[data-accent="white"] .settings-areas__add-btn,
+[data-accent="white"] .tasks-add-btn,
+[data-accent="white"] .tasks-form__btn,
+[data-accent="white"] .tasks-form button[type="submit"],
+[data-accent="white"] .theme-selector__btn--active,
+[data-accent="white"] .settings-pill--active {
+  background: var(--color-primary) !important;
+  color: #09090b !important;
+  font-weight: 600;
+}
+
+[data-accent="white"] .timer-hero__btn:not(.timer-hero__btn--stop):not(.timer-hero__btn--danger):not(.timer-hero__btn--active) svg,
+[data-accent="white"] .modal-btn--primary svg,
+[data-accent="white"] .btn--primary svg,
+[data-accent="white"] .settings-btn:not(.settings-btn--danger) svg,
+[data-accent="white"] .areas-header__add-btn svg,
+[data-accent="white"] .settings-areas__add-btn svg,
+[data-accent="white"] .tasks-add-btn svg,
+[data-accent="white"] .tasks-form__btn svg,
+[data-accent="white"] .tasks-form button[type="submit"] svg,
+[data-accent="white"] .theme-selector__btn--active svg{
+  color: #09090b !important;
+  stroke: #09090b !important;
+}
+
+[data-theme="monochrome"] .settings-section--danger {
+  border-color: rgba(239, 68, 68, 0.25) !important;
+  background: rgba(239, 68, 68, 0.03) !important;
+}
+
+[data-theme="monochrome"] .settings-btn--danger {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}
+
+[data-theme="monochrome"] .settings-btn--danger:hover {
+  background: rgba(239, 68, 68, 0.25) !important;
 }

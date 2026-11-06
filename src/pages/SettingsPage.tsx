@@ -5,21 +5,24 @@ import { DailyGoalSelector } from '../components/DailyGoalSelector';
 import { StreakThresholdSelector } from '../components/StreakThresholdSelector';
 import { ThemeSelector } from '../components/ThemeSelector';
 import { AccentSelector } from '../components/AccentSelector';
+import { LanguageSelector } from '../components/LanguageSelector';
 import { ResetDataCard } from '../components/ResetDataCard';
+import { useTranslation } from '../hooks/useTranslation';
 import './SettingsPage.css';
 
 export const SettingsPage: React.FC = () => {
   const { currentUser, handleLogout, setIsAuthModalOpen } = useAppContext();
+  const { t } = useTranslation();
 
   return (
     <div className="page settings-page">
-      <h1 className="settings-page__title">Налаштування</h1>
+      <h1 className="settings-page__title">{t('nav.settings')}</h1>
 
-      {/* Хмарна синхронізація в стилістиці основних карток */}
+      {/* Хмарна синхронізація */}
       <div className="settings-section">
         <div className="settings-section__header">
           <h2 className="settings-section__title">
-            {currentUser ? `Акаунт (${currentUser})` : 'Хмарна синхронізація'}
+            {currentUser ? `${t('settings.account')} (${currentUser})` : t('settings.cloudSync')}
           </h2>
 
           {currentUser ? (
@@ -34,7 +37,7 @@ export const SettingsPage: React.FC = () => {
                 fontSize: '13px',
               }}
             >
-              Вийти
+              {t('settings.logout')}
             </button>
           ) : (
             <button
@@ -47,32 +50,27 @@ export const SettingsPage: React.FC = () => {
                 fontSize: '13px',
               }}
             >
-              Увійти
+              {t('settings.login')}
             </button>
           )}
         </div>
       </div>
 
-      {/* Сфери діяльності */}
       <AreasManager />
-
-      {/* Денна норма */}
       <DailyGoalSelector />
-
-      {/* Мінімум для вогника */}
       <StreakThresholdSelector />
 
       {/* Оформлення */}
       <div className="settings-section">
         <div className="settings-section__header">
-          <h2 className="settings-section__title">Оформлення</h2>
+          <h2 className="settings-section__title">{t('settings.appearance')}</h2>
         </div>
 
         <ThemeSelector />
         <AccentSelector />
+        <LanguageSelector />
       </div>
 
-      {/* Дані та небезпечна зона */}
       <ResetDataCard />
     </div>
   );

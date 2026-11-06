@@ -4,4 +4,5 @@ export interface Task {
   completed: boolean;
   areaId?: string | null;
   createdAt: string;
+  isPinned?: boolean;
 }

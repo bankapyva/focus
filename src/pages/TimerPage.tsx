@@ -4,10 +4,12 @@ import { Sun, Moon } from 'lucide-react';
 import { TimerCard } from '../components/TimerCard';
 import { TodayAreas } from '../components/TodayAreas';
 import { TasksCard } from '../components/TasksCard';
+import { useTranslation } from '../hooks/useTranslation';
 import './TimerPage.css';
 
 export const TimerPage: React.FC = () => {
   const { settings, setSettings } = useAppContext();
+  const { t } = useTranslation();
 
   const toggleTheme = () => {
     setSettings((prev) => ({
@@ -19,7 +21,7 @@ export const TimerPage: React.FC = () => {
   return (
     <div className="page timer-page">
       <header className="timer-page__header">
-        <h1 className="timer-page__title">Головна</h1>
+        <h1 className="timer-page__title">{t('nav.home')}</h1>
 
         <div className="timer-page__header-actions">
           <div className="theme-toggle">
@@ -27,7 +29,7 @@ export const TimerPage: React.FC = () => {
               type="button"
               className={`theme-toggle__btn ${settings.theme === 'light' ? 'theme-toggle__btn--active' : ''}`}
               onClick={toggleTheme}
-              aria-label="Світла тема"
+              aria-label="Light Theme"
             >
               <Sun size={15} />
             </button>
@@ -35,7 +37,7 @@ export const TimerPage: React.FC = () => {
               type="button"
               className={`theme-toggle__btn ${settings.theme === 'dark' ? 'theme-toggle__btn--active' : ''}`}
               onClick={toggleTheme}
-              aria-label="Темна тема"
+              aria-label="Dark Theme"
             >
               <Moon size={15} />
             </button>

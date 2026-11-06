@@ -43,8 +43,9 @@
   color: var(--color-text);
 }
 
-.header-streak-badge svg.icon--flame {
-  color: #f97316;
+.header-streak-badge svg.icon--flame,
+.header-streak-badge svg {
+  color: var(--color-primary);
 }
 
 /* Перемикач теми */
@@ -76,7 +77,7 @@
 
 .theme-toggle__btn--active {
   background: rgba(255, 255, 255, 0.08);
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 /* ========================================
@@ -146,6 +147,11 @@
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+/* Ховаємо кольорову крапку на самій кнопці вибору сфери під таймером */
+.timer-hero__area-selector .timer-hero__area-dot {
+  display: none;
 }
 
 .timer-hero__area-selector svg {
@@ -285,14 +291,14 @@
 }
 
 /* ========================================
-   4. Блок "Сьогодні"
+   4. Блок "Сьогодні" (Новий дизайн: Чистий список)
 ======================================== */
 
 .today-panel__summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
 }
 
 .today-streak-badge {
@@ -309,8 +315,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-.today-streak-badge svg.icon--flame {
-  color: #f97316;
+.today-streak-badge svg.icon--flame,
+.today-streak-badge svg {
+  color: var(--color-primary);
 }
 
 .today-panel__hours-val {
@@ -327,7 +334,7 @@
   background: rgba(0, 0, 0, 0.22);
   border-radius: 999px;
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 12px; /* Зменшений відступ до списку */
 }
 
 .today-panel__goal-fill {
@@ -337,27 +344,37 @@
   transition: width 240ms ease;
 }
 
+/* Новий контейнер для сфер: Список без фонів із роздільниками */
 .today-areas-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 .today-area-row {
   display: grid;
-  grid-template-columns: 100px 76px 1fr 36px;
+  grid-template-columns: 1fr 60px 45px;
   align-items: center;
   gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   font-size: 13px;
+  background: transparent;
+}
+
+.today-area-row:last-child {
+  border-bottom: none;
+}
+
+.today-area-row:hover {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.04);
 }
 
 .today-area-row__name-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .today-area-row__dot {
@@ -370,36 +387,43 @@
 .today-area-row__name {
   color: var(--color-text);
   font-weight: 500;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.today-area-row__stats {
+  display: contents;
+}
+
 .today-area-row__hours {
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap !important;
+  font-weight: 550;
   text-align: right;
-}
-
-.today-area-row__track {
-  width: 100%;
-  height: 6px;
-  background: rgba(0, 0, 0, 0.22);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.today-area-row__fill {
-  height: 100%;
-  border-radius: 999px;
-  transition: width 240ms ease;
+  white-space: nowrap;
 }
 
 .today-area-row__percent {
-  text-align: right;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: 13px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Ховаємо старі елементи прогрес-барів */
+.today-area-row__track,
+.today-area-row__fill {
+  display: none !important;
+}
+
+[data-theme="light"] .today-area-row {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .today-area-row:hover {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* ========================================
@@ -413,7 +437,6 @@
   min-width: 0;
 }
 
-/* Кнопки керування в шапці завдань */
 .tasks-header-actions {
   display: flex;
   align-items: center;
@@ -453,7 +476,6 @@
   color: #f87171 !important;
 }
 
-/* Випадне віконце очищення */
 .tasks-delete-menu-wrapper {
   position: relative;
   display: inline-flex;
@@ -790,8 +812,7 @@
     color: var(--color-text);
   }
 
-  .today-panel__goal-track,
-  .today-area-row__track {
+  .today-panel__goal-track {
     background: rgba(0, 0, 0, 0.06);
   }
 
@@ -844,6 +865,59 @@
   }
 }
 
+/* ===================================================
+   БІЛИЙ АКЦЕНТНИЙ КОЛІР (Фікси для кнопок і селекторів)
+=================================================== */
+
+[data-accent="white"] .timer-hero__btn:not(.timer-hero__btn--stop):not(.timer-hero__btn--danger):not(.timer-hero__btn--active),
+[data-accent="white"] .modal-btn--primary,
+[data-accent="white"] .btn--primary,
+[data-accent="white"] .settings-btn:not(.settings-btn--danger),
+[data-accent="white"] .areas-header__add-btn,
+[data-accent="white"] .settings-areas__add-btn,
+[data-accent="white"] .tasks-add-btn,
+[data-accent="white"] .tasks-form__btn,
+[data-accent="white"] .tasks-form button[type="submit"],
+[data-accent="white"] .theme-selector__btn--active,
+[data-accent="white"] .settings-pill--active,
+[data-accent="white"] .theme-switch-card--active /* <--- Додали цей селектор */ {
+  background: var(--color-primary) !important;
+  color: #09090b !important; /* Робить текст чорним/темно-сірим */
+  font-weight: 600;
+}
+
+/* Фарбуємо іконки всередині кнопок у темний колір */
+[data-accent="white"] .timer-hero__btn:not(.timer-hero__btn--stop):not(.timer-hero__btn--danger):not(.timer-hero__btn--active) svg,
+[data-accent="white"] .modal-btn--primary svg,
+[data-accent="white"] .btn--primary svg,
+[data-accent="white"] .settings-btn:not(.settings-btn--danger) svg,
+[data-accent="white"] .areas-header__add-btn svg,
+[data-accent="white"] .settings-areas__add-btn svg,
+[data-accent="white"] .tasks-add-btn svg,
+[data-accent="white"] .tasks-form__btn svg,
+[data-accent="white"] .tasks-form button[type="submit"] svg,
+[data-accent="white"] .theme-selector__btn--active svg,
+[data-accent="white"] .theme-switch-card--active svg /* <--- Додали для іконок */ {
+  color: #09090b !important;
+  stroke: #09090b !important;
+}
+
+/* Зберігаємо червоний колір для небезпечної зони в налаштуваннях */
+[data-theme="monochrome"] .settings-section--danger {
+  border-color: rgba(239, 68, 68, 0.25) !important;
+  background: rgba(239, 68, 68, 0.03) !important;
+}
+
+[data-theme="monochrome"] .settings-btn--danger {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}
+
+[data-theme="monochrome"] .settings-btn--danger:hover {
+  background: rgba(239, 68, 68, 0.25) !important;
+}
+
 /* ========================================
    Мобільна адаптація головного екрана
 ======================================== */
@@ -856,7 +930,6 @@
     font-size: 24px;
   }
 
-  /* Акцентний, вищий блок таймера */
   .timer-hero {
     padding: 56px 16px 44px;
     min-height: 410px;
@@ -864,21 +937,18 @@
     justify-content: center;
   }
 
-  /* Збільшені цифри таймера (адаптуються під будь-який екран телефону) */
   .timer-hero__display {
     font-size: clamp(68px, 17vw, 84px);
     letter-spacing: -2.5px;
     margin-bottom: 26px;
   }
 
-  /* Зручніший селектор сфери */
   .timer-hero__area-selector {
     padding: 8px 18px;
     font-size: 14px;
     margin-bottom: 16px;
   }
 
-  /* Велика акцентна кнопка */
   .timer-hero__btn {
     width: 100%;
     max-width: 290px;
@@ -887,16 +957,18 @@
     font-weight: 600;
   }
 
-  /* Перемикаємо нижні блоки в одну колонку */
   .timer-bottom-grid {
     grid-template-columns: 1fr;
     gap: 16px;
   }
 
+  .today-areas-list {
+    flex-wrap: wrap;
+  }
+
   .today-area-row {
-    grid-template-columns: minmax(70px, 1.2fr) 60px 1fr 32px;
-    gap: 8px;
     font-size: 12px;
+    padding: 8px 0;
   }
 
   .tasks-panel {

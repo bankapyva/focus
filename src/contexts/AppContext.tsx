@@ -4,17 +4,19 @@ import { AppContext } from './AppContext';
 import { supabase } from '../lib/supabase';
 import type { Area } from '../types/Area';
 import type { Session } from '../types/Session';
-import type { Settings } from '../types/Settings';
+import type { Settings, AccentColor } from '../types/Settings';
 import type { Task } from '../types/Task';
 
 const defaultSettings: Settings = {
   theme: 'dark',
   accentColor: 'blue',
+  language: 'uk', // <-- Додано мову за замовчуванням
   dailyGoalHours: 4,
   streakThresholdHours: 1,
 };
 
-const ACCENT_PALETTE: Record<string, { primary: string; hover: string }> = {
+const ACCENT_PALETTE: Record<AccentColor, { primary: string; hover: string }> = {
+  white: { primary: '#e4e4e7', hover: '#d4d4d8' },
   blue: { primary: '#3f78ff', hover: '#5287ff' },
   purple: { primary: '#8b5cf6', hover: '#a78bfa' },
   turquoise: { primary: '#14b8a6', hover: '#2dd4bf' },
@@ -65,7 +67,6 @@ export function AppProvider({ children }: AppProviderProps) {
           .single();
 
         if (error && error.code === 'PGRST116') {
-          // Якщо першого запису ще немає — зберегти поточні локальні дані в базу
           await supabase.from('user_data').insert({
             id: userId,
             username: localStorage.getItem('focustime-username') || 'User',

@@ -6,6 +6,7 @@ import { ActivityCalendar, type CalendarView } from '../components/ActivityCalen
 import { AreaDistributionCard } from '../components/AreaDistributionCard';
 import { StatsOverview } from '../components/StatsOverview';
 import { DayEditModal } from '../components/DayEditModal';
+import { useTranslation } from '../hooks/useTranslation';
 import {
   calculateStatistics,
   type StatsPeriod,
@@ -18,8 +19,11 @@ const UKRAINIAN_MONTH_NAMES = [
   'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
   'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень',
 ];
+const ENGLISH_MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
 
-// Читання збереженого стану календаря при першому рендері
 function getInitialCalendarView(): CalendarView {
   try {
     const savedMode = localStorage.getItem('focustime-cal-view-mode');
@@ -49,8 +53,8 @@ function getInitialCalendarView(): CalendarView {
 
 export const StatisticsPage: React.FC = () => {
   const { sessions, setSessions, areas, settings } = useAppContext();
+  const { t, lang } = useTranslation();
 
-  // Зберігаємо вибір джерела (кнопки періоду чи календар)
   const [activeSource, setActiveSource] = useLocalStorage<'periodSelector' | 'calendar'>(
     'focustime-stats-active-source',
     'periodSelector'
@@ -69,7 +73,6 @@ export const StatisticsPage: React.FC = () => {
   const [calendarView, setCalendarView] = useState<CalendarView>(getInitialCalendarView);
   const [editingDateStr, setEditingDateStr] = useState<string | null>(null);
 
-  // Клік по кнопках у верхньому PeriodSelector
   const handlePeriodChange = (p: StatsPeriod, range?: CustomDateRange) => {
     setActiveSource('periodSelector');
     setPeriod(p);
@@ -78,13 +81,11 @@ export const StatisticsPage: React.FC = () => {
     }
   };
 
-  // Перемикання або гортання календаря
   const handleCalendarViewChange = (view: CalendarView) => {
     setCalendarView(view);
     setActiveSource('calendar');
   };
 
-  // Розрахунок діапазону для передачі у статистику
   const effectiveRange = useMemo<CustomDateRange | undefined>(() => {
     if (activeSource === 'calendar' && calendarView) {
       if (calendarView.viewMode === 'month') {
@@ -119,35 +120,35 @@ export const StatisticsPage: React.FC = () => {
     return period;
   }, [activeSource, period]);
 
-  // Розрахунок статистики з урахуванням індивідуального порогу годин для вогника
   const stats = useMemo(() => {
     return calculateStatistics(
       sessions,
       areas,
       effectivePeriod,
       effectiveRange,
-      settings.streakThresholdHours ?? 1
+      settings.streakThresholdHours ?? 1,
+      lang // <--- ПЕРЕДАЄМО МОВУ В УТИЛІТУ!
     );
-  }, [sessions, areas, effectivePeriod, effectiveRange, settings.streakThresholdHours]);
+  }, [sessions, areas, effectivePeriod, effectiveRange, settings.streakThresholdHours, lang]);
 
-  // Підпис періоду в картці розподілу за сферами
   const periodLabel = useMemo(() => {
+    const monthNames = lang === 'en' ? ENGLISH_MONTH_NAMES : UKRAINIAN_MONTH_NAMES;
+
     if (activeSource === 'calendar' && calendarView) {
       if (calendarView.viewMode === 'month') {
-        return `${UKRAINIAN_MONTH_NAMES[calendarView.month]} ${calendarView.year}`;
+        return `${monthNames[calendarView.month]} ${calendarView.year}`;
       }
-      return `${calendarView.year} рік`;
+      return lang === 'en' ? `${calendarView.year} Year` : `${calendarView.year} рік`;
     }
 
-    if (period === '7d') return 'За 7 днів';
-    if (period === '30d') return 'За 30 днів';
+    if (period === '7d') return lang === 'en' ? 'Last 7 days' : 'За 7 днів';
+    if (period === '30d') return lang === 'en' ? 'Last 30 days' : 'За 30 днів';
     if (period === 'custom' && customRange) {
       return `${customRange.startDate.slice(5).replace('-', '.')} – ${customRange.endDate.slice(5).replace('-', '.')}`;
     }
-    return 'Весь час';
-  }, [activeSource, calendarView, period, customRange]);
+    return lang === 'en' ? 'All time' : 'Весь час';
+  }, [activeSource, calendarView, period, customRange, lang]);
 
-  // Збереження зміненого часу за день із модалки
   const handleSaveDayHours = (
     dateStr: string,
     updatedSecondsByArea: Record<string, number>
@@ -177,9 +178,8 @@ export const StatisticsPage: React.FC = () => {
 
   return (
     <div className="page stats-page">
-      {/* Шапка з перемикачем періодів */}
       <header className="stats-page__header">
-        <h1 className="stats-page__title">Статистика</h1>
+        <h1 className="stats-page__title">{t('nav.statistics')}</h1>
         <PeriodSelector
           period={activeSource === 'periodSelector' ? period : ('' as StatsPeriod)}
           customRange={customRange}
@@ -187,7 +187,6 @@ export const StatisticsPage: React.FC = () => {
         />
       </header>
 
-      {/* Календар активності */}
       <ActivityCalendar
         sessions={sessions}
         areas={areas}
@@ -195,7 +194,6 @@ export const StatisticsPage: React.FC = () => {
         onViewChange={handleCalendarViewChange}
       />
 
-      {/* Нижні блоки, синхронізовані з активним періодом */}
       <section className="stats-grid-2col">
         <AreaDistributionCard
           areaStats={stats.areaStats}
@@ -206,7 +204,6 @@ export const StatisticsPage: React.FC = () => {
         <StatsOverview stats={stats} />
       </section>
 
-      {/* Модальне вікно редагування */}
       {editingDateStr && (
         <DayEditModal
           dateStr={editingDateStr}

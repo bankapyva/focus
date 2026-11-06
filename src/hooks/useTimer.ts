@@ -34,13 +34,18 @@ export function useTimer() {
     if (!activeTimer) return;
 
     const endTime = new Date().toISOString();
-    const duration = Math.max(
+    let duration = Math.max(
       0,
       Math.floor((new Date(endTime).getTime() - new Date(activeTimer.startTime).getTime()) / 1000)
     );
 
-    // Зберігаємо нову сесію у глобальний стан (і LocalStorage)
-    if (duration > 0) {
+    // Захист від забутого таймера (максимум 24 години)
+    if (duration > 86400) {
+      duration = 86400;
+    }
+
+    // Зберігаємо нову сесію, тільки якщо тривалість більше 5 секунд (щоб не було сміття)
+    if (duration >= 5) {
       const newSession: Session = {
         id: crypto.randomUUID(),
         areaId: activeTimer.areaId,

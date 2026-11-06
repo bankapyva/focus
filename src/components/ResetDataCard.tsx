@@ -3,10 +3,12 @@ import { Download, Upload, AlertTriangle } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
 import { exportDataAsJSON } from '../utils/exportData';
 import { parseImportFile } from '../utils/importData';
+import { useTranslation } from '../hooks/useTranslation';
 
 export const ResetDataCard: React.FC = () => {
   const { areas, sessions, settings, setAreas, setSessions, setSettings, setActiveTimer } =
     useAppContext();
+  const { t } = useTranslation();
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [importStatus, setImportStatus] = useState<string | null>(null);
@@ -27,10 +29,10 @@ export const ResetDataCard: React.FC = () => {
       if (data.sessions) setSessions(data.sessions);
       if (data.settings) setSettings(data.settings);
 
-      setImportStatus('Дані успішно імпортовано!');
+      setImportStatus(t('settings.data.importSuccess'));
       setTimeout(() => setImportStatus(null), 3000);
     } catch {
-      alert('Не вдалося імпортувати дані. Перевірте формат JSON-файлу.');
+      alert(t('settings.data.importErr'));
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
@@ -45,7 +47,15 @@ export const ResetDataCard: React.FC = () => {
     setAreas([]);
     setSessions([]);
     setActiveTimer(null);
-    setSettings({ theme: 'dark', accentColor: 'blue' });
+    
+    // ФІКС: Передаємо всі обов'язкові поля для типу Settings
+    setSettings({ 
+      theme: 'dark', 
+      accentColor: 'blue', 
+      language: settings.language,
+      dailyGoalHours: 4,
+      streakThresholdHours: 1
+    });
 
     setIsConfirmOpen(false);
   };
@@ -54,7 +64,7 @@ export const ResetDataCard: React.FC = () => {
     <>
       <div className="settings-section">
         <div className="settings-section__header">
-          <h2 className="settings-section__title">Дані</h2>
+          <h2 className="settings-section__title">{t('settings.data')}</h2>
         </div>
 
         <div className="data-actions-row">
@@ -64,7 +74,7 @@ export const ResetDataCard: React.FC = () => {
             onClick={handleExport}
           >
             <Download size={15} />
-            <span>Експортувати дані (JSON)</span>
+            <span>{t('settings.data.export')}</span>
           </button>
 
           <input
@@ -81,7 +91,7 @@ export const ResetDataCard: React.FC = () => {
             onClick={() => fileInputRef.current?.click()}
           >
             <Upload size={15} />
-            <span>Імпортувати дані</span>
+            <span>{t('settings.data.import')}</span>
           </button>
         </div>
 
@@ -91,7 +101,7 @@ export const ResetDataCard: React.FC = () => {
       <div className="settings-section settings-section--danger">
         <div className="settings-section__header">
           <h2 className="settings-section__title" style={{ color: '#f87171' }}>
-            Небезпечна зона
+            {t('settings.danger')}
           </h2>
 
           <button
@@ -99,7 +109,7 @@ export const ResetDataCard: React.FC = () => {
             className="settings-btn settings-btn--danger"
             onClick={() => setIsConfirmOpen(true)}
           >
-            Очистити всі дані
+            {t('settings.danger.clearAll')}
           </button>
         </div>
       </div>
@@ -111,13 +121,13 @@ export const ResetDataCard: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <AlertTriangle size={20} color="#f87171" />
                 <h3 className="modal-card__title" style={{ color: '#f87171' }}>
-                  Очистити всі дані?
+                  {t('settings.danger.modalTitle')}
                 </h3>
               </div>
             </div>
 
             <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-              Ця дія видалить усі сфери, сесії та статистику. Відновити дані буде неможливо.
+              {t('settings.danger.modalDesc')}
             </p>
 
             <div className="modal-card__actions" style={{ justifyContent: 'flex-end' }}>
@@ -126,14 +136,14 @@ export const ResetDataCard: React.FC = () => {
                 className="modal-btn modal-btn--secondary"
                 onClick={() => setIsConfirmOpen(false)}
               >
-                Скасувати
+                {t('modal.cancel')}
               </button>
               <button
                 type="button"
                 className="modal-btn modal-btn--danger"
                 onClick={handleConfirmReset}
               >
-                Так, видалити все
+                {t('settings.danger.confirm')}
               </button>
             </div>
           </div>

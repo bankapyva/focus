@@ -1,25 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Plus, MoreHorizontal, Pencil, Trash2, X, Check } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
+import { useTranslation } from '../hooks/useTranslation';
 import type { Area } from '../types/Area';
+import { getAreaName } from '../utils/areaHelper'; // Імпортуємо хелпер
 
 const PRESET_COLORS = [
-  '#3b82f6', // Синій
-  '#8b5cf6', // Фіолетовий
-  '#10b981', // Смарагдовий
-  '#f59e0b', // Бурштиновий
-  '#f43f5e', // Рожевий
-  '#06b6d4', // Бірюзовий
-  '#ec4899', // Маджента
-  '#84cc16', // Лайм
+  '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b',
+  '#f43f5e', '#06b6d4', '#ec4899', '#84cc16',
 ];
 
 export const AreasManager: React.FC = () => {
   const { areas, setAreas } = useAppContext();
+  const { t, lang } = useTranslation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingArea, setEditingArea] = useState<Area | null>(null);
-  const [name, setName] = useState('');
+  
+  // Тепер маємо два стани для назви
+  const [nameUk, setNameUk] = useState('');
+  const [nameEn, setNameEn] = useState('');
   const [color, setColor] = useState(PRESET_COLORS[0]);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
@@ -37,14 +37,24 @@ export const AreasManager: React.FC = () => {
 
   const handleOpenAddModal = () => {
     setEditingArea(null);
-    setName('');
+    setNameUk('');
+    setNameEn('');
     setColor(PRESET_COLORS[areas.length % PRESET_COLORS.length]);
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (area: Area) => {
     setEditingArea(area);
-    setName(area.name);
+    
+    // Заповнюємо поля залежно від старого/нового формату name
+    if (typeof area.name === 'string') {
+        setNameUk(area.name);
+        setNameEn(area.name); // Або залишити порожнім
+    } else {
+        setNameUk(area.name.uk || '');
+        setNameEn(area.name.en || '');
+    }
+    
     setColor(area.color);
     setIsModalOpen(true);
     setOpenMenuId(null);
@@ -53,21 +63,28 @@ export const AreasManager: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingArea(null);
-    setName('');
+    setNameUk('');
+    setNameEn('');
   };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!nameUk.trim()) return; // Укр. назва обов'язкова (або зроби обидві)
+
+    // Формуємо об'єкт з назвами
+    const newNameObj = { 
+        uk: nameUk.trim(), 
+        en: nameEn.trim() || nameUk.trim() // Якщо англ не ввели, дублюємо укр
+    };
 
     if (editingArea) {
       setAreas((prev) =>
-        prev.map((a) => (a.id === editingArea.id ? { ...a, name: name.trim(), color } : a))
+        prev.map((a) => (a.id === editingArea.id ? { ...a, name: newNameObj, color } : a))
       );
     } else {
       const newArea: Area = {
         id: crypto.randomUUID(),
-        name: name.trim(),
+        name: newNameObj,
         color,
       };
       setAreas((prev) => [...prev, newArea]);
@@ -84,25 +101,26 @@ export const AreasManager: React.FC = () => {
   return (
     <div className="settings-section">
       <div className="settings-section__header">
-        <h2 className="settings-section__title">Сфери діяльності</h2>
+        <h2 className="settings-section__title">{t('settings.areas')}</h2>
         <button
           type="button"
           className="settings-btn settings-btn--primary"
           onClick={handleOpenAddModal}
         >
-          <Plus size={16} /> Додати сферу
+          <Plus size={16} /> {t('settings.areas.add')}
         </button>
       </div>
 
       {areas.length === 0 ? (
-        <div className="settings-empty">У вас ще немає створених сфер діяльності</div>
+        <div className="settings-empty">{t('settings.areas.empty')}</div>
       ) : (
         <div className="areas-list">
           {areas.map((area) => (
             <div key={area.id} className="area-item">
               <div className="area-item__left">
                 <span className="area-item__dot" style={{ backgroundColor: area.color }} />
-                <span className="area-item__name">{area.name}</span>
+                {/* Використовуємо хелпер для відображення */}
+                <span className="area-item__name">{getAreaName(area, lang)}</span>
               </div>
 
               <div className="area-item__right">
@@ -114,7 +132,6 @@ export const AreasManager: React.FC = () => {
                     type="button"
                     className="area-item__menu-btn"
                     onClick={() => setOpenMenuId(openMenuId === area.id ? null : area.id)}
-                    aria-label="Меню сфери"
                   >
                     <MoreHorizontal size={16} />
                   </button>
@@ -126,14 +143,14 @@ export const AreasManager: React.FC = () => {
                         className="area-item__dropdown-btn"
                         onClick={() => handleOpenEditModal(area)}
                       >
-                        <Pencil size={13} /> Редагувати
+                        <Pencil size={13} /> {t('tasks.menu.edit')}
                       </button>
                       <button
                         type="button"
                         className="area-item__dropdown-btn area-item__dropdown-btn--danger"
                         onClick={() => handleDeleteArea(area.id)}
                       >
-                        <Trash2 size={13} /> Видалити
+                        <Trash2 size={13} /> {t('tasks.menu.delete')}
                       </button>
                     </div>
                   )}
@@ -144,13 +161,12 @@ export const AreasManager: React.FC = () => {
         </div>
       )}
 
-      {/* Модалка створення / редагування сфери */}
       {isModalOpen && (
         <div className="modal-backdrop" onClick={handleCloseModal}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="modal-card__header">
               <h3 className="modal-card__title">
-                {editingArea ? 'Редагувати сферу' : 'Нова сфера діяльності'}
+                {editingArea ? t('settings.areas.edit') : t('settings.areas.new')}
               </h3>
               <button
                 type="button"
@@ -162,20 +178,31 @@ export const AreasManager: React.FC = () => {
             </div>
 
             <form onSubmit={handleSave} className="modal-form">
+              {/* Поле для Української назви */}
               <div className="modal-form__group">
-                <label className="modal-form__label">Назва сфери</label>
+                <label className="modal-form__label">{t('settings.areas.name')} (UA)</label>
                 <input
                   type="text"
                   className="modal-form__input"
-                  placeholder=""
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={nameUk}
+                  onChange={(e) => setNameUk(e.target.value)}
                   autoFocus
                 />
               </div>
 
+              {/* Поле для Англійської назви */}
               <div className="modal-form__group">
-                <label className="modal-form__label">Колір сфери</label>
+                <label className="modal-form__label">{t('settings.areas.name')} (EN)</label>
+                <input
+                  type="text"
+                  className="modal-form__input"
+                  value={nameEn}
+                  onChange={(e) => setNameEn(e.target.value)}
+                />
+              </div>
+
+              <div className="modal-form__group">
+                <label className="modal-form__label">{t('settings.areas.color')}</label>
                 <div className="area-color-picker">
                   {PRESET_COLORS.map((c) => (
                     <button
@@ -197,14 +224,14 @@ export const AreasManager: React.FC = () => {
                   className="modal-btn modal-btn--secondary"
                   onClick={handleCloseModal}
                 >
-                  Скасувати
+                  {t('modal.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="modal-btn modal-btn--primary"
-                  disabled={!name.trim()}
+                  disabled={!nameUk.trim()} // Вимагаємо хоча б українську назву
                 >
-                  Зберегти
+                  {t('settings.save')}
                 </button>
               </div>
             </form>

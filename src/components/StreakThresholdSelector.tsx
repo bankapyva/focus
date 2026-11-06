@@ -1,19 +1,23 @@
 import React from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
+import { useTranslation } from '../hooks/useTranslation';
 
 const POPULAR_THRESHOLDS = [0.5, 1, 1.5, 2];
 
-function formatHours(val: number): string {
-  if (val === 0.5) return '30 хв';
-  if (val % 1 === 0) return `${val} год`;
-  const whole = Math.floor(val);
-  return `${whole} год 30 хв`;
-}
-
 export const StreakThresholdSelector: React.FC = () => {
   const { settings, setSettings } = useAppContext();
+  const { t, lang } = useTranslation();
   const currentThreshold = settings.streakThresholdHours ?? 1;
+
+  const formatHours = (val: number): string => {
+    const h = lang === 'en' ? 'h' : 'год';
+    const m = lang === 'en' ? 'm' : 'хв';
+    if (val === 0.5) return `30 ${m}`;
+    if (val % 1 === 0) return `${val} ${h}`;
+    const whole = Math.floor(val);
+    return `${whole} ${h} 30 ${m}`;
+  };
 
   const updateThreshold = (val: number) => {
     const clamped = Math.min(10, Math.max(0.5, Number(val.toFixed(1))));
@@ -26,11 +30,10 @@ export const StreakThresholdSelector: React.FC = () => {
   return (
     <div className="settings-section">
       <div className="settings-section__header">
-        <h2 className="settings-section__title">Мінімум для вогника</h2>
+        <h2 className="settings-section__title">{t('settings.streakThreshold')}</h2>
       </div>
 
       <div className="time-selector-row">
-        {/* Швидкі пресети */}
         <div className="time-presets-list">
           {POPULAR_THRESHOLDS.map((hours) => (
             <button
@@ -46,14 +49,13 @@ export const StreakThresholdSelector: React.FC = () => {
           ))}
         </div>
 
-        {/* Точний степер із кроком 30 хв */}
         <div className="time-stepper">
           <button
             type="button"
             className="time-stepper__btn"
             onClick={() => updateThreshold(currentThreshold - 0.5)}
             disabled={currentThreshold <= 0.5}
-            aria-label="Зменшити мінімум на 30 хв"
+            aria-label="Decrease"
           >
             <Minus size={15} />
           </button>
@@ -67,7 +69,7 @@ export const StreakThresholdSelector: React.FC = () => {
             className="time-stepper__btn"
             onClick={() => updateThreshold(currentThreshold + 0.5)}
             disabled={currentThreshold >= 10}
-            aria-label="Збільшити мінімум на 30 хв"
+            aria-label="Increase"
           >
             <Plus size={15} />
           </button>

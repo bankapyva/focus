@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, LogIn, UserPlus, AlertCircle, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
+  const { t } = useTranslation();
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,11 +24,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     e.preventDefault();
     const cleanUser = username.trim().toLowerCase();
     if (!cleanUser || !password) {
-      setErrorMsg('Будь ласка, заповніть усі поля');
+      setErrorMsg(t('auth.err.empty'));
       return;
     }
     if (password.length < 6) {
-      setErrorMsg('Пароль має містити щонайменше 6 символів');
+      setErrorMsg(t('auth.err.shortPass'));
       return;
     }
 
@@ -47,7 +49,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
 
         if (error) {
           if (error.message.includes('already registered')) {
-            setErrorMsg('Користувач із таким логіном уже існує');
+            setErrorMsg(t('auth.err.exists'));
           } else {
             setErrorMsg(error.message);
           }
@@ -65,7 +67,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         });
 
         if (error) {
-          setErrorMsg('Невірний логін або пароль');
+          setErrorMsg(t('auth.err.wrongCreds'));
           return;
         }
 
@@ -75,7 +77,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         }
       }
     } catch {
-      setErrorMsg('Помилка з’єднання із сервером');
+      setErrorMsg(t('auth.err.network'));
     } finally {
       setIsLoading(false);
     }
@@ -110,13 +112,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
           style={{ marginBottom: '8px', paddingBottom: 0, border: 'none' }}
         >
           <h3 className="modal-card__title" style={{ margin: 0, fontSize: '16px' }}>
-            {isSignUp ? 'Створити акаунт' : 'Хмарна синхронізація'}
+            {isSignUp ? t('auth.title.signUp') : t('auth.title.cloud')}
           </h3>
           <button
             type="button"
             className="modal-card__close-btn"
             onClick={onClose}
-            aria-label="Закрити"
+            aria-label={t('modal.cancel')}
           >
             <X size={16} />
           </button>
@@ -155,7 +157,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 marginBottom: '3px',
               }}
             >
-              Логін
+              {t('auth.login')}
             </label>
             <input
               type="text"
@@ -177,7 +179,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 marginBottom: '3px',
               }}
             >
-              Пароль
+              {t('auth.password')}
             </label>
             <input
               type="password"
@@ -205,12 +207,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
             ) : isSignUp ? (
               <>
                 <UserPlus size={15} />
-                <span>Зареєструватися</span>
+                <span>{t('auth.btn.signUp')}</span>
               </>
             ) : (
               <>
                 <LogIn size={15} />
-                <span>Увійти</span>
+                <span>{t('auth.btn.login')}</span>
               </>
             )}
           </button>
@@ -224,7 +226,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
             color: 'var(--color-text-secondary)',
           }}
         >
-          {isSignUp ? 'Вже маєте акаунт?' : 'Ще немає акаунта?'}{' '}
+          {isSignUp ? t('auth.hasAccount') : t('auth.noAccount')}{' '}
           <button
             type="button"
             onClick={() => {
@@ -240,7 +242,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               padding: 0,
             }}
           >
-            {isSignUp ? 'Увійти' : 'Створити'}
+            {isSignUp ? t('auth.btn.loginText') : t('auth.btn.createText')}
           </button>
         </div>
       </div>

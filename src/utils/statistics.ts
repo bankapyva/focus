@@ -1,6 +1,9 @@
 import type { Area } from '../types/Area';
 import type { Session } from '../types/Session';
 import { calculateRecordStreak } from './streaks';
+// Імпортуємо форматтери, які тепер приймають параметр 'lang'
+import { formatDateUkrainian, formatWeekRange } from './time';
+import { getAreaName } from './areaHelper';
 
 export type StatsPeriod = '7d' | '30d' | 'all' | 'custom';
 
@@ -11,7 +14,7 @@ export interface CustomDateRange {
 
 export interface AreaStat {
   id: string;
-  name: string;
+  name: string; // Зауваж: якщо ти запровадиш {uk, en} для назв сфер, тут теж треба буде адаптувати!
   color: string;
   totalSeconds: number;
   percentage: number;
@@ -50,6 +53,11 @@ const MONTH_NAMES_UK = [
   'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
 ];
 
+const MONTH_NAMES_EN = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 // Безпечне форматування дати без зсуву часових поясів UTC
 function formatDateKey(d: Date): string {
   const y = d.getFullYear();
@@ -67,28 +75,13 @@ function getStartOfWeek(date: Date): Date {
   return d;
 }
 
-// Форматування діапазону з понеділка по неділю
-function formatWeekRange(startOfWeek: Date): string {
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(endOfWeek.getDate() + 6); // +6 днів веде строго на неділю
-
-  const sDay = startOfWeek.getDate();
-  const eDay = endOfWeek.getDate();
-  const sMonth = MONTH_NAMES_UK[startOfWeek.getMonth()].toLowerCase();
-  const eMonth = MONTH_NAMES_UK[endOfWeek.getMonth()].toLowerCase();
-
-  if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
-    return `${sDay} – ${eDay} ${sMonth}`;
-  }
-  return `${sDay} ${sMonth} – ${eDay} ${eMonth}`;
-}
-
 export function calculateStatistics(
   sessions: Session[],
   areas: Area[],
   period: StatsPeriod,
   customRange?: CustomDateRange,
-  streakThresholdHours: number = 1
+  streakThresholdHours: number = 1,
+  lang: 'uk' | 'en' = 'uk' // <--- Приймаємо мову для правильного форматування дат
 ): StatisticsOverview {
   const now = new Date();
   let startDate: Date;
@@ -108,7 +101,6 @@ export function calculateStatistics(
     const [eY, eM, eD] = customRange.endDate.split('-').map(Number);
     endDate = new Date(eY, eM - 1, eD, 23, 59, 59, 999);
   } else {
-    // 'all'
     if (sessions.length > 0) {
       const earliest = Math.min(...sessions.map((s) => new Date(s.startTime).getTime()));
       startDate = new Date(earliest);
@@ -119,23 +111,19 @@ export function calculateStatistics(
     }
   }
 
-  // Фільтруємо сесії за вибраний період
   const filteredSessions = sessions.filter((s) => {
     const sessionTime = new Date(s.startTime).getTime();
     return sessionTime >= startDate.getTime() && sessionTime <= endDate.getTime();
   });
 
-  // Загальний час за період
   const totalSeconds = filteredSessions.reduce((acc, s) => acc + s.duration, 0);
-
-  // Кількість днів для розрахунку середнього
   const diffDays = Math.max(
     1,
     Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24))
   );
   const averageSecondsPerDay = Math.round(totalSeconds / diffDays);
 
-  // 1. Найкращий день за період
+  // 1. Найкращий день
   const dayTotals: Record<string, number> = {};
   filteredSessions.forEach((s) => {
     const sDate = new Date(s.startTime);
@@ -152,13 +140,14 @@ export function calculateStatistics(
       const [y, m, d] = dKey.split('-').map(Number);
       const dayDate = new Date(y, m - 1, d);
       bestDay = {
-        formattedDate: `${dayDate.getDate()} ${MONTH_NAMES_UK[dayDate.getMonth()].toLowerCase()}`,
+        // Передаємо мову у форматер дати!
+        formattedDate: formatDateUkrainian(dayDate, lang), 
         seconds: sec,
       };
     }
   });
 
-  // 2. Найкращий тиждень за період (строго Понеділок – Неділя)
+  // 2. Найкращий тиждень
   const weekTotals: Record<string, number> = {};
   filteredSessions.forEach((s) => {
     const sDate = new Date(s.startTime);
@@ -176,13 +165,14 @@ export function calculateStatistics(
       const [y, m, d] = wKey.split('-').map(Number);
       const wDate = new Date(y, m - 1, d);
       bestWeek = {
-        formattedRange: formatWeekRange(wDate),
+        // Передаємо мову у форматер тижня!
+        formattedRange: formatWeekRange(wDate, lang),
         seconds: sec,
       };
     }
   });
 
-  // 3. Найкращий календарний місяць (за весь час)
+  // 3. Найкращий місяць
   const monthTotals: Record<string, number> = {};
   sessions.forEach((s) => {
     const d = new Date(s.startTime);
@@ -198,29 +188,31 @@ export function calculateStatistics(
       maxMonthSeconds = sec;
       const [yearStr, monthStr] = mKey.split('-');
       const mIdx = Number(monthStr);
+      
+      // Визначаємо правильний масив місяців на основі мови
+      const monthNames = lang === 'en' ? MONTH_NAMES_EN : MONTH_NAMES_UK;
+
       bestMonth = {
-        monthLabel: `${MONTH_NAMES_UK[mIdx]} ${yearStr}`,
+        monthLabel: `${monthNames[mIdx]} ${yearStr}`,
         seconds: sec,
       };
     }
   });
 
-  // 4. Рекордна серія за заданим порогом
   const recordStreak = calculateRecordStreak(sessions, streakThresholdHours);
 
-  // 5. Статистика по сферах
   const areaTotals: Record<string, number> = {};
   filteredSessions.forEach((s) => {
     areaTotals[s.areaId] = (areaTotals[s.areaId] || 0) + s.duration;
   });
 
-  const areaStats: AreaStat[] = areas
+    const areaStats: AreaStat[] = areas
     .map((area) => {
       const sec = areaTotals[area.id] || 0;
       const pct = totalSeconds > 0 ? (sec / totalSeconds) * 100 : 0;
       return {
         id: area.id,
-        name: area.name,
+        name: getAreaName(area, lang), // ВАЖЛИВО: використовуємо хелпер
         color: area.color,
         totalSeconds: sec,
         percentage: Number(pct.toFixed(1)),
