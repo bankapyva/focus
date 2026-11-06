@@ -4,6 +4,8 @@ import { Clock, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
 import type { Session } from '../types/Session';
 import { formatHours } from '../utils/time';
+import { useTranslation } from '../hooks/useTranslation';
+import { getAreaName } from '../utils/areaHelper';
 
 interface RecentSessionsProps {
   onEditSession?: (session: Session) => void;
@@ -11,15 +13,14 @@ interface RecentSessionsProps {
 
 export const RecentSessions: React.FC<RecentSessionsProps> = ({ onEditSession }) => {
   const { sessions, setSessions, areas } = useAppContext();
+  const { lang } = useTranslation();
   const [activeMenuSessionId, setActiveMenuSessionId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // Сортуємо сесії від найновішої до найстарішої та беремо останні 4 записи
   const recentList = [...sessions]
     .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
     .slice(0, 4);
 
-  // Закриваємо меню при кліку за його межами
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -89,7 +90,7 @@ export const RecentSessions: React.FC<RecentSessionsProps> = ({ onEditSession })
                   />
                   <div className="recent-session-item__details">
                     <span className="recent-session-item__title">
-                      {area?.name || 'Невідома сфера'}
+                      {area ? getAreaName(area, lang) : 'Невідома сфера'}
                     </span>
                     <span className="recent-session-item__time">
                       {formatTimeRange(session.startTime, session.endTime)}

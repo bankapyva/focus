@@ -1,5 +1,7 @@
 import React from 'react';
 import type { Area } from '../types/Area';
+import { useTranslation } from '../hooks/useTranslation';
+import { getAreaName } from '../utils/areaHelper';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -22,6 +24,8 @@ export const CustomTooltip: React.FC<CustomTooltipProps> = ({
   payload,
   areas,
 }) => {
+  const { lang } = useTranslation();
+
   if (!active || !payload || payload.length === 0) {
     return null;
   }
@@ -29,7 +33,6 @@ export const CustomTooltip: React.FC<CustomTooltipProps> = ({
   const firstItem = payload[0].payload;
   const totalHours = firstItem.totalHours || 0;
 
-  // Знаходимо лише ті сфери, в яких у цей день були години (> 0)
   const activeAreasForDay = areas
     .map((area) => {
       const hours = Number(firstItem[area.id] || 0);
@@ -53,7 +56,7 @@ export const CustomTooltip: React.FC<CustomTooltipProps> = ({
                   className="chart-tooltip__dot"
                   style={{ backgroundColor: area.color }}
                 />
-                <span>{area.name}</span>
+                <span>{getAreaName(area, lang)}</span>
               </div>
               <span className="chart-tooltip__hours">{hours} год</span>
             </div>

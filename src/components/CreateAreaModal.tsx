@@ -4,26 +4,15 @@ import type { Area } from '../types/Area';
 
 interface CreateAreaModalProps {
   initialArea?: Area | null;
-  onSave: (areaData: { name: string; color: string }) => void;
+  onSave: (areaData: { name: { uk: string; en: string }; color: string }) => void;
   onClose: () => void;
 }
 
-// 14 підготовлених кольорів для темної теми
 const PRESET_COLORS = [
-  '#3f78ff', // Синій
-  '#6366f1', // Індиго
-  '#8b5cf6', // Фіолетовий
-  '#a855f7', // Пурпуровий
-  '#ec4899', // Рожевий
-  '#f43f5e', // Червоний
-  '#f97316', // Помаранчевий
-  '#f59e0b', // Янтарний
-  '#10b981', // Смарагдовий
-  '#14b8a6', // Бірюзовий
-  '#06b6d4', // Ціан
-  '#0ea5e9', // Небесний
-  '#84cc16', // Лайм
-  '#64748b', // Сірий
+  '#3f78ff', '#6366f1', '#8b5cf6', '#a855f7',
+  '#ec4899', '#f43f5e', '#f97316', '#f59e0b',
+  '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9',
+  '#84cc16', '#64748b',
 ];
 
 export const CreateAreaModal: React.FC<CreateAreaModalProps> = ({
@@ -31,20 +20,37 @@ export const CreateAreaModal: React.FC<CreateAreaModalProps> = ({
   onSave,
   onClose,
 }) => {
-  const [name, setName] = useState(initialArea?.name || '');
+  const getInitialUk = () => {
+    if (!initialArea) return '';
+    return typeof initialArea.name === 'string' ? initialArea.name : initialArea.name.uk || '';
+  };
+
+  const getInitialEn = () => {
+    if (!initialArea) return '';
+    return typeof initialArea.name === 'string' ? initialArea.name : initialArea.name.en || '';
+  };
+
+  const [nameUk, setNameUk] = useState(getInitialUk());
+  const [nameEn, setNameEn] = useState(getInitialEn());
   const [color, setColor] = useState(initialArea?.color || PRESET_COLORS[0]);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = name.trim();
+    const trimmedUk = nameUk.trim();
 
-    if (!trimmed) {
-      setError('Введіть назву сфери');
+    if (!trimmedUk) {
+      setError('Введіть назву сфери (UA)');
       return;
     }
 
-    onSave({ name: trimmed, color });
+    onSave({
+      name: {
+        uk: trimmedUk,
+        en: nameEn.trim() || trimmedUk,
+      },
+      color,
+    });
     onClose();
   };
 
@@ -67,20 +73,34 @@ export const CreateAreaModal: React.FC<CreateAreaModalProps> = ({
 
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="modal-form__group">
-            <label className="modal-form__label">Назва сфери</label>
+            <label className="modal-form__label">Назва сфери (UA)</label>
             <input
               type="text"
               className="modal-form__input"
-              placeholder="Наприклад: Трейдинг, Blender, Навчання..."
-              value={name}
+              placeholder="Наприклад: Навчання..."
+              value={nameUk}
               onChange={(e) => {
-                setName(e.target.value);
+                setNameUk(e.target.value);
                 setError(null);
               }}
               autoFocus
               maxLength={30}
             />
             {error && <span className="modal-form__error">{error}</span>}
+          </div>
+
+          <div className="modal-form__group">
+            <label className="modal-form__label">Назва сфери (EN)</label>
+            <input
+              type="text"
+              className="modal-form__input"
+              placeholder="For example: Study..."
+              value={nameEn}
+              onChange={(e) => {
+                setNameEn(e.target.value);
+              }}
+              maxLength={30}
+            />
           </div>
 
           <div className="modal-form__group">

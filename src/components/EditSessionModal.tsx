@@ -3,13 +3,14 @@ import { X, Trash2 } from 'lucide-react';
 import { useAppContext } from '../contexts/useAppContext';
 import type { Session } from '../types/Session';
 import { formatHours } from '../utils/time';
+import { useTranslation } from '../hooks/useTranslation';
+import { getAreaName } from '../utils/areaHelper';
 
 interface EditSessionModalProps {
   session: Session;
   onClose: () => void;
 }
 
-// Конвертує ISO-рядок у формат "YYYY-MM-DDTHH:mm" для input[type="datetime-local"]
 function toDateTimeLocal(isoString: string): string {
   const date = new Date(isoString);
   const pad = (n: number) => n.toString().padStart(2, '0');
@@ -23,13 +24,13 @@ function toDateTimeLocal(isoString: string): string {
 
 export const EditSessionModal: React.FC<EditSessionModalProps> = ({ session, onClose }) => {
   const { areas, setSessions } = useAppContext();
+  const { lang } = useTranslation();
 
   const [areaId, setAreaId] = useState(session.areaId);
   const [startTimeLocal, setStartTimeLocal] = useState(() => toDateTimeLocal(session.startTime));
   const [endTimeLocal, setEndTimeLocal] = useState(() => toDateTimeLocal(session.endTime));
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Розрахунок тривалості на льоту під час редагування часу
   const startTimestamp = new Date(startTimeLocal).getTime();
   const endTimestamp = new Date(endTimeLocal).getTime();
   const calculatedSeconds = Math.max(0, Math.floor((endTimestamp - startTimestamp) / 1000));
@@ -66,7 +67,6 @@ export const EditSessionModal: React.FC<EditSessionModalProps> = ({ session, onC
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        {/* Шапка модального вікна */}
         <div className="modal-card__header">
           <h3 className="modal-card__title">Редагувати сесію</h3>
           <button
@@ -79,9 +79,7 @@ export const EditSessionModal: React.FC<EditSessionModalProps> = ({ session, onC
           </button>
         </div>
 
-        {/* Форма */}
         <form onSubmit={handleSave} className="modal-form">
-          {/* Вибір сфери */}
           <div className="modal-form__group">
             <label className="modal-form__label">Сфера діяльності</label>
             <select
@@ -91,13 +89,12 @@ export const EditSessionModal: React.FC<EditSessionModalProps> = ({ session, onC
             >
               {areas.map((area) => (
                 <option key={area.id} value={area.id}>
-                  {area.name}
+                  {getAreaName(area, lang)}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* Час початку */}
           <div className="modal-form__group">
             <label className="modal-form__label">Час початку</label>
             <input
@@ -112,7 +109,6 @@ export const EditSessionModal: React.FC<EditSessionModalProps> = ({ session, onC
             />
           </div>
 
-          {/* Час завершення */}
           <div className="modal-form__group">
             <label className="modal-form__label">Час завершення</label>
             <input
@@ -127,7 +123,6 @@ export const EditSessionModal: React.FC<EditSessionModalProps> = ({ session, onC
             />
           </div>
 
-          {/* Розрахована тривалість */}
           <div className="modal-form__duration-badge">
             <span>Розрахована тривалість:</span>
             <strong>
@@ -139,7 +134,6 @@ export const EditSessionModal: React.FC<EditSessionModalProps> = ({ session, onC
             <div className="modal-form__error">{errorMessage}</div>
           )}
 
-          {/* Кнопки дій */}
           <div className="modal-card__actions">
             <button
               type="button"
