@@ -49,14 +49,8 @@ body,
 }
 
 body {
-  background:
-    radial-gradient(
-      circle at 65% 20%,
-      color-mix(in srgb, var(--color-primary) 10%, transparent),
-      transparent 35%
-    ),
-    var(--color-bg);
-
+  /* Прибрали radial-gradient, щоб не було світіння фону */
+  background: var(--color-bg);
   color: var(--color-text);
 }
 
@@ -192,10 +186,8 @@ ol {
 
 .sidebar__link--active {
   color: #ffffff;
+  /* Прибрали box-shadow, залишили лише плавний колір фону */
   background: color-mix(in srgb, var(--color-primary) 16%, transparent);
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 22%, transparent),
-    0 4px 18px color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .sidebar__link--active svg {
@@ -218,7 +210,7 @@ ol {
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--color-primary);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  /* Прибрали box-shadow, який створював ореол навколо крапки */
 }
 
 .sidebar__status-content {

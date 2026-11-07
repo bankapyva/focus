@@ -37,22 +37,28 @@ export const AreaDistributionCard: React.FC<AreaDistributionCardProps> = ({
         </div>
       ) : (
         <div className="area-distribution-body">
-          <div className="area-distribution-chart">
+<div className="area-distribution-chart">
             <ResponsiveContainer width={195} height={195}>
               <PieChart>
                 <Pie
                   data={chartData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={66}
+                  innerRadius={68}
                   outerRadius={90}
-                  paddingAngle={3}
+                  paddingAngle={4}
+                  cornerRadius={2} // Зменшили закруглення країв (було 4 або 6)
                   dataKey="value"
-                  stroke="none"
                   pointerEvents="none"
                 >
                   {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={entry.color}
+                      fillOpacity={0.15} // Легка тонована заливка всередині
+                      stroke={entry.color} // Тонка яскрава лінія контуру
+                      strokeWidth={1.5}
+                    />
                   ))}
                 </Pie>
               </PieChart>
